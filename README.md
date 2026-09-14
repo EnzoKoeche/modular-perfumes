@@ -70,7 +70,7 @@ No modo `CATALOGO_PROVEDOR=exemplo` (padrão), a importação usa perfumes fict�
 | | 3. Script SQL do banco de dados | [`entregas/sql/modular_perfumes_sprint1.sql`](entregas/sql/modular_perfumes_sprint1.sql), com as consultas de verificação em [`consultas_sprint1.sql`](entregas/sql/consultas_sprint1.sql). A 2ª Sprint acrescenta [`modular_perfumes_sprint2.sql`](entregas/sql/modular_perfumes_sprint2.sql). |
 | **Gestão de Projeto + Controle de Versão** — 14/09 | 1. Link público do Trello + print | Quadro: https://trello.com/b/6aa8142cf99507d054887fdb · guia dos cards: [`entregas/trello/cards.md`](entregas/trello/cards.md) |
 | | 2. Link público do GitHub + print de Insights → Contributors | Este repositório |
-| **1ª Sprint do Produto (Apresentação)** — 20/09 | PDF do PPT da apresentação | A fazer |
+| **1ª Sprint do Produto (Apresentação)** — 20/09 | PDF do PPT da apresentação | [`entregas/apresentacao/Modular_Perfumes_Apresentacao_Sprint1.pdf`](entregas/apresentacao/Modular_Perfumes_Apresentacao_Sprint1.pdf) (gerado por `entregas/apresentacao/fonte/`) |
 
 Imagens de apoio:
 - DER lógico da 1ª Sprint (Artefato 6): [`entregas/der/Modular_Perfumes_DER_Logico_Sprint1.png`](entregas/der/Modular_Perfumes_DER_Logico_Sprint1.png)

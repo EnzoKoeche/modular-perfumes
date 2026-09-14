@@ -10,3 +10,7 @@ venv/
 .vercel
 .env*
 !.env.example
+entregas/apresentacao/fonte/img/
+entregas/apresentacao/fonte/evidencias.json
+entregas/apresentacao/fonte/slides.html
+entregas/apresentacao/fonte/slide_*.png
