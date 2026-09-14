@@ -38,6 +38,7 @@ Condições para adotar:
   - fixação e projeção → `perfume.fixacao` e `perfume.projecao`
   - foto → `perfume.imagem_url`
 - **Endpoint usado na 1ª Sprint:** `GET https://api.fragella.com/api/v1/brands/{marca}?limit=N`, com cabeçalho `x-api-key`. Uma requisição traz vários perfumes da marca, o que economiza a cota. Os campos lidos são `_id`, `Name`, `Brand`, `Country`, `Gender`, `Year`, `Image URL`, `Longevity`, `Sillage`, `Notes.Top/Middle/Base`, `Main Accords` e `Main Accords Percentage` (texto como "Dominant", por isso `perfume_acorde.intensidade` é VARCHAR).
+- **Teste real (14/09):** 7 marcas importadas (Dior, Chanel, Creed, Yves Saint Laurent, Tom Ford, Guerlain, Jean Paul Gaultier), 50 perfumes cada, todos com foto e avaliação, de 1862 a 2024. Duas lições: o `_id` chega a 74 caracteres (por isso `api_id` é VARCHAR(191)), e algumas URLs de foto têm `#` (codificado como `%23`) ou não existem na CDN (a tela mostra o marcador "sem foto").
 - **Modo exemplo:** com `CATALOGO_PROVEDOR=exemplo`, o site lê perfumes fictícios de `app/catalogo_exemplo.json`, no mesmo formato, para desenvolver sem gastar cota.
 - **Chave:** `FRAGELLA_API_KEY` em variável de ambiente (RNF-04).
 - **Cota:** cada importação registra quantas requisições gastou, e a sincronização agendada (RF-16) não passa do limite mensal do plano.

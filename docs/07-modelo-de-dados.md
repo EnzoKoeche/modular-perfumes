@@ -170,7 +170,7 @@ Perfume importado da API (RF-13). `api_id` evita duplicar na reimportação; `ca
 | Chave | Coluna | Tipo | Nulo |
 |---|---|---|---|
 | PK | `id` | INT AUTO_INCREMENT | não |
-| U | `api_id` | VARCHAR(64) | não |
+| U | `api_id` | VARCHAR(191) | não |
 | FK | `marca_id` | INT | não |
 |  | `nome` | VARCHAR(150) | não |
 |  | `genero` | ENUM(MASCULINO,FEMININO,UNISSEX) | sim |

@@ -1,6 +1,6 @@
 <a class="card card-hover text-decoration-none text-reset" href="{{ url_for('vitrine.detalhe', perfume_id=r.perfume_id) }}">
   <div class="card-body d-flex gap-3">
-    {% if r.imagem_url %}<img class="frasco" src="{{ r.imagem_url }}" alt="">{% else %}<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
+    {% if r.imagem_url %}<img data-foto class="frasco" src="{{ r.imagem_url }}" alt="">{% else %}<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
     <div>
       <div class="fw-semibold">{{ r.nome }}</div>
       <div class="small text-muted">{{ r.marca }}{% if r.ano %} · {{ r.ano }}{% endif %}</div>

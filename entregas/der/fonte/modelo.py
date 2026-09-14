@@ -103,7 +103,7 @@ tabela('acorde', AZUL, [
 ])
 tabela('perfume', LARANJA, [
     PK,
-    ('U', 'api_id', 'VARCHAR(64)', 'NN'),
+    ('U', 'api_id', 'VARCHAR(191)', 'NN'),
     ('FK', 'marca_id', 'INT', 'NN'),
     ('', 'nome', 'VARCHAR(150)', 'NN'),
     ('', 'genero', 'ENUM(MASCULINO,FEMININO,UNISSEX)', 'NULL'),

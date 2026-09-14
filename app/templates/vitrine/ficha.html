@@ -5,7 +5,7 @@
 <div class="row g-4 mt-1">
   <div class="col-md-5 col-lg-4">
     <div class="card"><div class="card-body">
-      {% if p.imagem_url %}<img class="foto" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}">{% else %}<div class="foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
+      {% if p.imagem_url %}<img data-foto class="foto" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}">{% else %}<div class="foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
     </div></div>
   </div>
   <div class="col-md-7 col-lg-8">

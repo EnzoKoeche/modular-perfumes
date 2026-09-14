@@ -210,3 +210,10 @@ def test_acentos_gravados_corretamente(client, banco):
     """O script SQL declara utf8mb4; acentos não podem virar "Ã©" no banco."""
     assert banco("SELECT nome FROM familia_olfativa WHERE id = 2")[0]['nome'] == 'Fresco/Cítrico'
     assert 'você' in banco("SELECT enunciado FROM pergunta WHERE id = 1")[0]['enunciado']
+
+
+def test_url_de_imagem_com_cerquilha_e_espaco():
+    from app.catalogo import _url_imagem
+    assert _url_imagem('https://cdn.fragella.com/images/chanel-#5.jpg') == 'https://cdn.fragella.com/images/chanel-%235.jpg'
+    assert _url_imagem(' https://x.com/a b.jpg ') == 'https://x.com/a%20b.jpg'
+    assert _url_imagem('') is None

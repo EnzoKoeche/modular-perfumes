@@ -47,7 +47,7 @@
       <h2 class="h5">Perfumes no catálogo <span class="badge text-bg-light">{{ perfumes|length }}</span></h2>
       {% for p in perfumes %}
         <div class="d-flex gap-3 py-3 border-bottom">
-          {% if p.imagem_url %}<img class="frasco" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}" loading="lazy">
+          {% if p.imagem_url %}<img data-foto class="frasco" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}" loading="lazy">
           {% else %}<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
           <div class="flex-grow-1">
             <div class="fw-semibold">{{ p.nome }} <span class="text-muted fw-normal">· {{ p.marca }}</span></div>

@@ -61,6 +61,17 @@
     <span class="mono">MODULAR PERFUMES</span> · Experiência Criativa · PUCPR
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // foto que não existe na CDN vira o marcador "sem foto", em vez de ícone quebrado
+    document.addEventListener('error', (e) => {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || !img.hasAttribute('data-foto')) return;
+      const vazio = document.createElement('div');
+      vazio.className = img.className + ' foto-vazia';
+      vazio.innerHTML = '<i class="bi bi-droplet-half"></i>';
+      img.replaceWith(vazio);
+    }, true);
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

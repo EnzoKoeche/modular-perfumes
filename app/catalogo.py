@@ -75,6 +75,12 @@ def _ano(valor):
     return int(v) if v.isdigit() and 1800 <= int(v) <= 2100 else None
 
 
+def _url_imagem(valor):
+    """Algumas URLs da Fragella têm '#' ou espaço no nome do arquivo (ex.: chanel-#5.jpg)."""
+    url = str(valor or '').strip()
+    return url.replace(' ', '%20').replace('#', '%23')[:500] or None
+
+
 def _nota(valor):
     try:
         nota = float(str(valor).replace(',', '.'))
@@ -120,7 +126,7 @@ def gravar_perfume(dado):
         'nome': nome[:150],
         'genero': _genero(dado.get('Gender')),
         'ano': _ano(dado.get('Year')),
-        'imagem_url': (dado.get('Image URL') or None),
+        'imagem_url': _url_imagem(dado.get('Image URL')),
         'fixacao': (dado.get('Longevity') or None),
         'projecao': (dado.get('Sillage') or None),
         'concentracao': (dado.get('OilType') or None),

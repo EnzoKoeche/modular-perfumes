@@ -58,7 +58,7 @@
     a.className = 'card card-hover text-decoration-none text-reset';
     a.href = '/perfumes/' + r.perfume_id;
     const foto = r.imagem_url
-      ? `<img class="frasco" src="${encodeURI(r.imagem_url)}" alt="">`
+      ? `<img data-foto class="frasco" src="${encodeURI(r.imagem_url)}" alt="">`
       : '<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>';
     a.innerHTML = `<div class="card-body d-flex gap-3">${foto}<div><div class="fw-semibold"></div>
       <div class="small text-muted marca"></div><div class="small mt-1 just"></div></div></div>`;
