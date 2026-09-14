@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block titulo %}Catálogo{% endblock %}
+{% block conteudo %}
+<h1 class="h3 mb-3">Catálogo via API</h1>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm"><div class="card-body">
+      <h2 class="h5">Importar catálogo</h2>
+      <p class="small mb-2">Provedor: <strong>{{ 'Fragella API' if provedor == 'fragella' else 'Exemplo (perfumes fictícios)' }}</strong>
+        {% if provedor == 'fragella' %}{% if chave_configurada %}<span class="badge text-bg-success">chave configurada</span>{% else %}<span class="badge text-bg-danger">sem chave</span>{% endif %}{% endif %}</p>
+      {% if provedor != 'fragella' %}<p class="small text-muted">No modo exemplo, use a marca <em>Casa Demo</em> ou <em>Atelier Exemplo</em>.</p>{% endif %}
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-2">
+          <label for="marca" class="form-label">Marca</label>
+          <input id="marca" name="marca" class="form-control" required placeholder="Ex.: Casa Demo">
+        </div>
+        <div class="mb-3">
+          <label for="limite" class="form-label">Quantidade máxima</label>
+          <input id="limite" name="limite" type="number" min="1" max="50" value="10" class="form-control">
+          <div class="form-text">Cada importação usa 1 requisição da cota da API.</div>
+        </div>
+        <button class="btn mp-btn w-100">Importar catálogo</button>
+      </form>
+    </div></div>
+
+    <div class="card border-0 shadow-sm mt-3"><div class="card-body">
+      <h2 class="h6">Últimas importações</h2>
+      {% for l in logs %}
+        <div class="border-bottom py-2 small">
+          <div class="d-flex justify-content-between">
+            <span>#{{ l.id }} · {{ l.iniciada_em.strftime('%d/%m %H:%M') }}</span>
+            {% set cor = {'CONCLUIDA': 'success', 'FALHOU': 'danger'}.get(l.status, 'secondary') %}
+            <span class="badge text-bg-{{ cor }}">{{ l.status|replace('CONCLUIDA', 'concluída')|replace('FALHOU', 'falhou')|replace('EM_ANDAMENTO', 'em andamento') }}</span>
+          </div>
+          {% if l.status == 'CONCLUIDA' %}<div class="text-muted">{{ l.qtd_incluidos }} incluído(s), {{ l.qtd_atualizados }} atualizado(s)</div>{% endif %}
+          {% if l.mensagem_erro %}<div class="text-danger">{{ l.mensagem_erro }}</div>{% endif %}
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">Nenhuma importação ainda.</p>
+      {% endfor %}
+    </div></div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm"><div class="card-body">
+      <h2 class="h5">Perfumes no catálogo <span class="badge text-bg-light">{{ perfumes|length }}</span></h2>
+      {% for p in perfumes %}
+        <div class="d-flex gap-3 py-3 border-bottom">
+          {% if p.imagem_url %}<img class="frasco" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}" loading="lazy">
+          {% else %}<div class="frasco d-flex align-items-center justify-content-center"><i class="bi bi-droplet fs-4 text-muted"></i></div>{% endif %}
+          <div class="flex-grow-1">
+            <div class="fw-semibold">{{ p.nome }} <span class="text-muted fw-normal">· {{ p.marca }}</span></div>
+            <div class="small text-muted">{{ (p.genero or '')|lower }}{% if p.ano %} · {{ p.ano }}{% endif %}{% if p.fixacao %} · fixação: {{ p.fixacao }}{% endif %}{% if p.projecao %} · projeção: {{ p.projecao }}{% endif %}</div>
+            {% if p.notas %}<div class="small"><strong>Notas:</strong> {{ p.notas }}</div>{% endif %}
+            {% if p.acordes %}<div class="small"><strong>Acordes:</strong> {{ p.acordes }}</div>{% endif %}
+            <div class="small text-muted">ID na API: {{ p.api_id }}</div>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">O catálogo está vazio. Importe uma marca ao lado.</p>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

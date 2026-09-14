@@ -125,7 +125,7 @@ tabela('perfume_nota', VERDE, [
 tabela('perfume_acorde', VERDE, [
     ('PK,FK', 'perfume_id', 'INT', 'NN'),
     ('PK,FK', 'acorde_id', 'INT', 'NN'),
-    ('', 'intensidade', 'DECIMAL(5,2)', 'NULL'),
+    ('', 'intensidade', 'VARCHAR(20)', 'NULL'),
 ])
 tabela('importacao_catalogo', AZUL, [
     PK,

@@ -1,0 +1,12 @@
+:root { --mp-vinho: #3b1f2b; --mp-dourado: #b8892b; --mp-creme: #faf6f1; }
+body { background: var(--mp-creme); }
+.mp-nav { background: var(--mp-vinho); }
+.mp-btn { background: var(--mp-dourado); color: #fff; border: 0; }
+.mp-btn:hover, .mp-btn:focus { background: #9c7322; color: #fff; }
+.mp-badge { background: var(--mp-dourado); }
+.mp-hero { background: linear-gradient(135deg, #fff 0%, #f1e6d8 100%); }
+.pergunta-pendente { border: 2px solid var(--bs-danger) !important; }
+.pergunta-continuar { border: 2px solid var(--mp-dourado) !important; }
+.afinidade { height: .75rem; background: #eadfce; border-radius: 1rem; overflow: hidden; }
+.afinidade > div { height: 100%; background: var(--mp-dourado); }
+.frasco { width: 56px; height: 56px; object-fit: contain; background: #f3ece2; border-radius: .5rem; }

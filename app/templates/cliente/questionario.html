@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block titulo %}Questionário de perfil olfativo{% endblock %}
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h3">{{ questionario.titulo }}</h1>
+    <p class="text-muted">Conte um pouco do seu gosto. Com o perfil pronto, o consultor de IA é liberado para você. Perguntas com <span class="text-danger">*</span> são obrigatórias.</p>
+    {% set respondidas = perguntas|selectattr('id', 'in', salvas.keys()|list)|list|length %}
+    <div class="progress mb-4" role="progressbar" aria-label="Progresso" aria-valuenow="{{ respondidas }}" aria-valuemin="0" aria-valuemax="{{ perguntas|length }}">
+      <div class="progress-bar" style="width: {{ (100 * respondidas / (perguntas|length or 1))|round }}%; background: var(--mp-dourado)">{{ respondidas }} de {{ perguntas|length }}</div>
+    </div>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% for p in perguntas %}
+        {% set classe = 'pergunta-pendente' if p.id in pendentes else ('pergunta-continuar' if p.id == primeira_sem_resposta and not pendentes and respondidas else '') %}
+        <fieldset class="card border-0 shadow-sm mb-3 {{ classe }}" id="pergunta-{{ p.id }}">
+          <div class="card-body">
+            <legend class="h6">{{ loop.index }}. {{ p.enunciado }}{% if p.obrigatoria %} <span class="text-danger">*</span>{% endif %}
+              <small class="text-muted fw-normal">({{ 'marque uma' if p.tipo == 'UNICA' else 'marque uma ou mais' }})</small></legend>
+            {% if classe == 'pergunta-continuar' %}<p class="small mb-2" style="color: var(--mp-dourado)"><i class="bi bi-arrow-right-circle"></i> Continue daqui</p>{% endif %}
+            {% if p.id in pendentes %}<p class="small text-danger mb-2">Responda esta pergunta para concluir.</p>{% endif %}
+            {% for a in p.alternativas %}
+              <div class="form-check">
+                <input class="form-check-input" type="{{ 'radio' if p.tipo == 'UNICA' else 'checkbox' }}"
+                       name="pergunta_{{ p.id }}" id="alt-{{ a.id }}" value="{{ a.id }}"
+                       {% if a.id in salvas.get(p.id, []) %}checked{% endif %}>
+                <label class="form-check-label" for="alt-{{ a.id }}">{{ a.texto }}</label>
+              </div>
+            {% endfor %}
+          </div>
+        </fieldset>
+      {% endfor %}
+      <div class="d-flex flex-wrap gap-2 justify-content-end">
+        <button class="btn btn-outline-secondary" name="acao" value="salvar">Salvar e continuar depois</button>
+        <button class="btn mp-btn" name="acao" value="concluir">Concluir</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // US3 CA2/CA3: rola até a primeira pergunta pendente ou até onde o cliente parou
+  const alvo = document.querySelector('.pergunta-pendente') || document.querySelector('.pergunta-continuar');
+  if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+</script>
+{% endblock %}

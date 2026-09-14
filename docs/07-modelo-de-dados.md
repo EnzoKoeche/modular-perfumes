@@ -196,13 +196,13 @@ Pirâmide olfativa: nota por nível (saída, corpo, fundo).
 
 ### `perfume_acorde`
 
-Acordes do perfume, com intensidade quando a API informar.
+Acordes do perfume. `intensidade` guarda o descritor da Fragella (campo `Main Accords Percentage`, ex.: "Dominant").
 
 | Chave | Coluna | Tipo | Nulo |
 |---|---|---|---|
 | PK,FK | `perfume_id` | INT | não |
 | PK,FK | `acorde_id` | INT | não |
-|  | `intensidade` | DECIMAL(5,2) | sim |
+|  | `intensidade` | VARCHAR(20) | sim |
 
 ### `importacao_catalogo`
 

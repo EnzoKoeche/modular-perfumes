@@ -5,7 +5,41 @@ Plataforma web gratuita de **consultoria olfativa com IA**. O cliente cria a con
 Projeto da disciplina **Experiência Criativa – Projetando Soluções Computacionais** (Bacharelado em Engenharia de Software, PUCPR).
 **Equipe:** Enzo Koeche Castagna · Angelo · André Lagos.
 
-> **Status:** 1ª Sprint. Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, user stories no padrão da rubrica, DER e script SQL da 1ª Sprint.
+> **Status:** 1ª Sprint implementada (5 user stories). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, user stories no padrão da rubrica, DER e script SQL da 1ª Sprint.
+
+## Rodar o site localmente (1ª Sprint)
+
+Pré-requisitos: Python 3.9+, Docker.
+
+```bash
+# 1. banco MySQL com as tabelas e a carga inicial da 1ª Sprint
+docker compose up -d db
+
+# 2. ambiente Python
+python3 -m venv .venv
+source .venv/bin/activate          # no Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env               # ajuste SECRET_KEY
+
+# 3. criar um administrador (pede a senha)
+flask --app app criar-admin admin@exemplo.com "Administrador"
+
+# 4. subir o site em http://127.0.0.1:5050
+flask --app app run --port 5050 --debug
+
+# testes automáticos (um por critério de aceite), com o banco do passo 1 no ar
+pytest
+```
+
+| Onde fica cada user story | Rota | Código |
+|---|---|---|
+| US1 — cadastro do cliente | `/cadastro` | `app/auth.py` |
+| US2 — login | `/login` | `app/auth.py` |
+| US3 — questionário de perfil olfativo | `/questionario/` | `app/questionario.py` |
+| US4 — manter perguntas (admin) | `/admin/perguntas` | `app/admin.py` |
+| US5 — importar catálogo (admin) | `/admin/catalogo` | `app/admin.py` e `app/catalogo.py` |
+
+No modo `CATALOGO_PROVEDOR=exemplo` (padrão), a importação usa perfumes fictícios das marcas *Casa Demo* e *Atelier Exemplo*. Para a API real, use `CATALOGO_PROVEDOR=fragella` e preencha `FRAGELLA_API_KEY` no `.env`.
 
 ## Documentação
 

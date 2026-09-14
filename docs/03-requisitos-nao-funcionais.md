@@ -6,7 +6,7 @@ Os valores numéricos são **metas de projeto** para um trabalho acadêmico. Ser
 
 | ID | Requisito | Como verificar |
 |---|---|---|
-| RNF-01 | Senhas são guardadas apenas como hash com algoritmo próprio para senha (bcrypt ou Argon2). Nenhuma senha em texto puro, nem em log. | Inspecionar a tabela `usuario` e os logs depois de um cadastro. |
+| RNF-01 | Senhas são guardadas apenas como hash com salt, usando algoritmo próprio para senha (PBKDF2-SHA256 do Werkzeug na 1ª Sprint; bcrypt ou Argon2 também servem). Nenhuma senha em texto puro, nem em log. | Inspecionar a tabela `usuario` e os logs depois de um cadastro. |
 | RNF-02 | A sessão usa cookie `HttpOnly`, `Secure` (em produção) e `SameSite=Lax`. Formulários que alteram dados têm proteção CSRF. | Inspecionar os cabeçalhos no navegador; tentar um POST sem token. |
 | RNF-03 | Toda rota verifica o perfil de acesso no **servidor**. Esconder o botão na tela não basta. | Chamar a rota de outro perfil diretamente pela URL e esperar 403. |
 | RNF-04 | As chaves da API da Anthropic e da API de catálogo ficam só no servidor, em variável de ambiente. Nunca vão para o front-end nem para o repositório (`.env` no `.gitignore`, `.env.example` sem valores). | Buscar as chaves no bundle do front e no histórico do git. |
@@ -53,7 +53,7 @@ Os valores numéricos são **metas de projeto** para um trabalho acadêmico. Ser
 
 | ID | Requisito |
 |---|---|
-| RNF-23 | Código versionado no GitHub, com README de instalação, `.env.example` e migrations do banco. |
+| RNF-23 | Código versionado no GitHub, com README de instalação, `.env.example` e o script SQL do banco. |
 | RNF-24 | Testes automatizados para as regras de negócio (RN-04, RN-05, RN-07, RN-11, RN-12) e para os CRUDs principais. |
 | RNF-25 | As integrações externas (API de catálogo e API de IA) ficam atrás de uma camada própria, para trocar de provedor sem mexer nas telas. |
 | RNF-26 | Logs de aplicação sem dados pessoais: registram IDs, nunca nome, e-mail ou conteúdo da conversa. |

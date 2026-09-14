@@ -1,15 +1,15 @@
 # 06 — Arquitetura e agente de IA
 
-> **Status:** proposta. A stack depende do que a disciplina exigir (ver [12-decisoes-pendentes.md](12-decisoes-pendentes.md)). O desenho do agente e das integrações vale para qualquer stack.
+> **Status:** a stack abaixo está em uso desde a 1ª Sprint (código em `app/`). O agente de IA entra na Sprint 2.
 
 ## Stack proposta
 
 | Camada | Escolha proposta | Por quê |
 |---|---|---|
 | Linguagem | Python 3.12 | SDK oficial da Anthropic (`anthropic`), boa para a equipe e para o conteúdo da disciplina. |
-| Web | Flask + Jinja2 (páginas renderizadas no servidor) | Simples de ensinar e de testar; o chat usa *Server-Sent Events* para o streaming. |
-| Autenticação | Flask-Login + Flask-WTF (CSRF) + hash Argon2 ou bcrypt | Atende RNF-01 a RNF-03. |
-| Banco | MySQL 8, com SQLAlchemy e migrations Alembic | O template da disciplina usa MySQL Workbench; migrations atendem RNF-23. |
+| Web | Flask + Jinja2 + HTML, CSS e Bootstrap 5 (páginas renderizadas no servidor) | Tecnologias vistas na disciplina, simples de alterar; o chat da Sprint 2 usa *Server-Sent Events* para o streaming. |
+| Autenticação | Sessão do Flask + Flask-WTF (CSRF) + hash PBKDF2-SHA256 (Werkzeug) | Atende RNF-01 a RNF-03. |
+| Banco | MySQL 8 com SQL escrito à mão (PyMySQL); o esquema vem de `entregas/sql/modular_perfumes_sprint1.sql`, gerado do modelo | É o SQL que a disciplina ensina; o script versionado atende RNF-23. |
 | IA | API da Anthropic pelo SDK `anthropic` (Python), com Tool Runner | Ver a seção "Agente consultor". |
 | Tarefas agendadas | Job agendado (APScheduler ou cron do servidor) | Sincronização do catálogo (RF-16). |
 | Hospedagem | A definir | Precisa suportar Python e MySQL e guardar variáveis de ambiente com segurança. |

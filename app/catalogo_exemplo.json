@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "exemplo-001", "Name": "Brisa de Bergamota", "Brand": "Casa Demo", "Year": "2019", "Country": "Brasil",
+    "Gender": "unisex", "Image URL": null, "Longevity": "Moderate", "Sillage": "Soft",
+    "Main Accords": ["citrus", "aromatic", "fresh"],
+    "Main Accords Percentage": {"citrus": "Dominant", "aromatic": "Prominent", "fresh": "Moderate"},
+    "Notes": {"Top": [{"name": "Bergamot"}, {"name": "Lemon"}], "Middle": [{"name": "Lavender"}], "Base": [{"name": "Musk"}]}
+  },
+  {
+    "_id": "exemplo-002", "Name": "Noite de Âmbar", "Brand": "Casa Demo", "Year": "2021", "Country": "Brasil",
+    "Gender": "men", "Image URL": null, "Longevity": "Long Lasting", "Sillage": "Strong",
+    "Main Accords": ["amber", "warm spicy", "woody"],
+    "Main Accords Percentage": {"amber": "Dominant", "warm spicy": "Prominent", "woody": "Moderate"},
+    "Notes": {"Top": [{"name": "Pink Pepper"}], "Middle": [{"name": "Cinnamon"}, {"name": "Incense"}], "Base": [{"name": "Amber"}, {"name": "Vanilla"}]}
+  },
+  {
+    "_id": "exemplo-003", "Name": "Jardim de Jasmim", "Brand": "Casa Demo", "Year": "2020", "Country": "Brasil",
+    "Gender": "women", "Image URL": null, "Longevity": "Long Lasting", "Sillage": "Moderate",
+    "Main Accords": ["white floral", "floral", "powdery"],
+    "Main Accords Percentage": {"white floral": "Dominant", "floral": "Prominent", "powdery": "Subtle"},
+    "Notes": {"Top": [{"name": "Mandarin Orange"}], "Middle": [{"name": "Jasmine"}, {"name": "Rose"}], "Base": [{"name": "Sandalwood"}]}
+  },
+  {
+    "_id": "exemplo-004", "Name": "Cedro Urbano", "Brand": "Atelier Exemplo", "Year": "2018", "Country": "França",
+    "Gender": "men", "Image URL": null, "Longevity": "Moderate", "Sillage": "Moderate",
+    "Main Accords": ["woody", "leather", "earthy"],
+    "Main Accords Percentage": {"woody": "Dominant", "leather": "Prominent", "earthy": "Moderate"},
+    "Notes": {"Top": [{"name": "Grapefruit"}], "Middle": [{"name": "Cedar"}, {"name": "Vetiver"}], "Base": [{"name": "Leather"}]}
+  },
+  {
+    "_id": "exemplo-005", "Name": "Caramelo Salgado", "Brand": "Atelier Exemplo", "Year": "2022", "Country": "França",
+    "Gender": "unisex", "Image URL": null, "Longevity": "Very Long Lasting", "Sillage": "Strong",
+    "Main Accords": ["sweet", "vanilla", "caramel"],
+    "Main Accords Percentage": {"sweet": "Dominant", "vanilla": "Prominent", "caramel": "Prominent"},
+    "Notes": {"Top": [{"name": "Sea Salt"}], "Middle": [{"name": "Caramel"}], "Base": [{"name": "Vanilla"}, {"name": "Tonka Bean"}]}
+  },
+  {
+    "_id": "exemplo-006", "Name": "Maré Alta", "Brand": "Atelier Exemplo", "Year": "2017", "Country": "França",
+    "Gender": "unisex", "Image URL": null, "Longevity": "Weak", "Sillage": "Soft",
+    "Main Accords": ["marine", "fresh", "ozonic"],
+    "Main Accords Percentage": {"marine": "Dominant", "fresh": "Prominent", "ozonic": "Moderate"},
+    "Notes": {"Top": [{"name": "Sea Notes"}], "Middle": [{"name": "Rosemary"}], "Base": [{"name": "Driftwood"}]}
+  }
+]

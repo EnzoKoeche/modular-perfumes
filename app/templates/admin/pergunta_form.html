@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ 'Alterar' if pergunta else 'Nova' }} pergunta{% endblock %}
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <h1 class="h4 mb-3">{{ 'Alterar pergunta' if pergunta else 'Nova pergunta' }}</h1>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+          <label for="enunciado" class="form-label">Enunciado</label>
+          <input id="enunciado" name="enunciado" class="form-control" maxlength="255" value="{{ dados.enunciado }}">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label for="tipo" class="form-label">Tipo de resposta</label>
+            <select id="tipo" name="tipo" class="form-select">
+              <option value="UNICA" {% if dados.tipo == 'UNICA' %}selected{% endif %}>Escolha única</option>
+              <option value="MULTIPLA" {% if dados.tipo == 'MULTIPLA' %}selected{% endif %}>Múltipla escolha</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <label for="ordem" class="form-label">Ordem</label>
+            <input id="ordem" name="ordem" type="number" min="1" class="form-control" value="{{ dados.ordem or '' }}">
+          </div>
+          <div class="col-sm-3 d-flex align-items-end">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" name="obrigatoria" id="obrigatoria" {% if dados.obrigatoria %}checked{% endif %}>
+              <label class="form-check-label" for="obrigatoria">Obrigatória</label>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="alternativas" class="form-label">Alternativas <span class="text-muted small">(uma por linha, mínimo de duas)</span></label>
+          <textarea id="alternativas" name="alternativas" class="form-control" rows="6">{{ dados.alternativas|join('\n') }}</textarea>
+        </div>
+        <div class="d-flex gap-2 justify-content-end">
+          <a class="btn btn-outline-secondary" href="{{ url_for('admin.perguntas') }}">Cancelar</a>
+          <button class="btn mp-btn">Salvar</button>
+        </div>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

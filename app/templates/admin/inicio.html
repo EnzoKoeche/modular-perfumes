@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block titulo %}Painel do administrador{% endblock %}
+{% block conteudo %}
+<h1 class="h3 mb-3">Painel do administrador</h1>
+<div class="row g-3 mb-4">
+  {% for rotulo, valor, icone in [('Clientes', resumo.clientes, 'people'), ('Perfis gerados', resumo.perfis, 'ui-checks'), ('Perguntas ativas', resumo.perguntas, 'question-circle'), ('Perfumes no catálogo', resumo.perfumes, 'droplet')] %}
+  <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm"><div class="card-body">
+    <div class="small text-muted"><i class="bi bi-{{ icone }}"></i> {{ rotulo }}</div>
+    <div class="fs-3 fw-semibold">{{ valor }}</div>
+  </div></div></div>
+  {% endfor %}
+</div>
+<div class="row g-3">
+  <div class="col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body">
+    <h2 class="h5">Questionário de perfil</h2>
+    <p class="text-muted">Cadastre, altere e exclua as perguntas que definem o perfil olfativo dos clientes.</p>
+    <a class="btn mp-btn" href="{{ url_for('admin.perguntas') }}">Manter perguntas</a>
+  </div></div></div>
+  <div class="col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body">
+    <h2 class="h5">Catálogo via API</h2>
+    <p class="text-muted">Importe perfumes com foto, notas e acordes, sem cadastro manual.</p>
+    <a class="btn mp-btn" href="{{ url_for('admin.catalogo_view') }}">Importar catálogo</a>
+  </div></div></div>
+</div>
+{% endblock %}

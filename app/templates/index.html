@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block titulo %}Consultor olfativo com IA{% endblock %}
+{% block conteudo %}
+<section class="mp-hero rounded-4 p-4 p-md-5 mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-semibold">Descubra o perfume que combina com você.</h1>
+      <p class="lead mt-3">Responda um questionário rápido sobre o seu gosto e converse com um consultor olfativo de inteligência artificial. Ele explica cada indicação e leva você à loja certa para comprar.</p>
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        {% if usuario %}
+          <a class="btn btn-lg mp-btn" href="{{ url_for('auth.login') }}">Ir para a minha área</a>
+        {% else %}
+          <a class="btn btn-lg mp-btn" href="{{ url_for('auth.cadastro') }}">Criar conta grátis</a>
+          <a class="btn btn-lg btn-outline-dark" href="{{ url_for('auth.login') }}">Já tenho conta</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <p class="text-uppercase small text-muted mb-2">Como funciona</p>
+          <ol class="mb-0 ps-3">
+            <li class="mb-2"><strong>Crie sua conta</strong> — é gratuito.</li>
+            <li class="mb-2"><strong>Responda o questionário</strong> de perfil olfativo.</li>
+            <li class="mb-2"><strong>Converse com o consultor de IA</strong> e receba recomendações explicadas.</li>
+            <li><strong>Guarde os favoritos na sacola</strong> e vá direto à loja de cada um.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="row g-3">
+  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
+    <h2 class="h5"><i class="bi bi-ui-checks"></i> Perfil olfativo</h2>
+    <p class="mb-0 text-muted">Suas respostas viram afinidades com famílias como floral, amadeirado e cítrico.</p>
+  </div></div></div>
+  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
+    <h2 class="h5"><i class="bi bi-chat-heart"></i> Consultor de IA</h2>
+    <p class="mb-0 text-muted">Conversa em linguagem simples e justifica cada recomendação. <span class="badge text-bg-secondary">Sprint 2</span></p>
+  </div></div></div>
+  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
+    <h2 class="h5"><i class="bi bi-bag-heart"></i> Lojas parceiras</h2>
+    <p class="mb-0 text-muted">O site não vende: leva você à página da loja de cada perfume escolhido. <span class="badge text-bg-secondary">Sprint 3</span></p>
+  </div></div></div>
+</div>
+{% endblock %}

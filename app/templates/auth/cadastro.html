@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block titulo %}Criar conta{% endblock %}
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-5">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <h1 class="h3 mb-1">Criar conta</h1>
+      <p class="text-muted">É gratuito. Depois do cadastro você responde o questionário de perfil olfativo.</p>
+      <form method="post" novalidate id="form-cadastro">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome</label>
+          <input id="nome" name="nome" class="form-control {% if erros.nome %}is-invalid{% endif %}" value="{{ dados.nome }}" required maxlength="80" autocomplete="name">
+          <div class="invalid-feedback">{{ erros.nome or 'Informe o seu nome.' }}</div>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" name="email" type="email" class="form-control {% if erros.email %}is-invalid{% endif %}" value="{{ dados.email }}" required maxlength="120" autocomplete="email">
+          <div class="invalid-feedback">{{ erros.email or 'Informe um e-mail válido.' }}</div>
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input id="senha" name="senha" type="password" class="form-control {% if erros.senha %}is-invalid{% endif %}" required minlength="8" autocomplete="new-password">
+          <div class="form-text">Mínimo de 8 caracteres.</div>
+          <div class="invalid-feedback">{{ erros.senha or 'A senha precisa ter pelo menos 8 caracteres.' }}</div>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input {% if erros.aceite %}is-invalid{% endif %}" type="checkbox" name="aceite" id="aceite" required>
+          <label class="form-check-label small" for="aceite">Li e aceito os termos de uso e a política de privacidade. Entendo que as conversas com o consultor são processadas por um provedor de IA externo.</label>
+          <div class="invalid-feedback">{{ erros.aceite or 'É preciso aceitar os termos.' }}</div>
+        </div>
+        <button class="btn mp-btn w-100">Criar conta</button>
+      </form>
+      <p class="small text-center mt-3 mb-0">Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a></p>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // US1 CA3: o navegador não envia o formulário e destaca o campo a corrigir
+  document.getElementById('form-cadastro').addEventListener('submit', function (e) {
+    if (!this.checkValidity()) { e.preventDefault(); e.stopPropagation(); }
+    this.classList.add('was-validated');
+  });
+</script>
+{% endblock %}

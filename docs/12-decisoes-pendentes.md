@@ -2,7 +2,7 @@
 
 | # | Decisão | Opções | Quem decide | Impacto se atrasar |
 |---|---|---|---|---|
-| D-01 | **Stack do site** | Proposta: Python + Flask + MySQL (06-arquitetura). O script SQL já é MySQL 8. | Equipe | Bloqueia o início do código da Sprint 1 (apresentação em 20/09). |
+| D-01 | ~~Stack do site~~ | **Resolvido em 14/09:** Python + Flask + HTML/CSS/Bootstrap + MySQL (SQL puro), tecnologias da disciplina. | — | — |
 | D-02 | **Autorização da Fragella** para guardar um recorte do catálogo | Autorizado → segue a decisão principal. Negado → plano B (dataset público, sem fotos). | Fragella (e-mail) | Bloqueia a US5 (importação). |
 | D-03 | **Plano pago da Fragella** | Basic US$ 12/mês ou pagamento por uso. | Equipe | Sem plano, 20 requisições/mês não cobrem a importação. |
 | D-04 | **Modelo e esforço da IA** | `claude-opus-5` (padrão recomendado) com esforço ajustado, ou modelo mais barato depois de medir a qualidade. | Equipe | Afeta custo e qualidade; dá para decidir na Sprint 2 com dados reais. |

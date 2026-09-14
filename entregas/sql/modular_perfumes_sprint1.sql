@@ -204,7 +204,7 @@ CREATE TABLE perfume_nota (
 CREATE TABLE perfume_acorde (
   perfume_id INT NOT NULL,
   acorde_id INT NOT NULL,
-  intensidade DECIMAL(5,2) NULL,
+  intensidade VARCHAR(20) NULL,
   PRIMARY KEY (perfume_id, acorde_id),
   CONSTRAINT fk_perfume_acorde_perfume_id FOREIGN KEY (perfume_id) REFERENCES perfume (id) ON DELETE CASCADE,
   CONSTRAINT fk_perfume_acorde_acorde_id FOREIGN KEY (acorde_id) REFERENCES acorde (id) ON DELETE RESTRICT

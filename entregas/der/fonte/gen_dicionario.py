@@ -19,7 +19,7 @@ DESC = {
  'acorde': 'Acorde vindo da API (ex.: amadeirado); `familia_id` liga o acorde a uma família olfativa.',
  'perfume': 'Perfume importado da API (RF-13). `api_id` evita duplicar na reimportação; `campos_revisados` guarda os campos que o administrador alterou e que a API não sobrescreve (RN-07). `imagem_url` aponta para a imagem servida pela API, sem copiar o arquivo (RNF-19, R-02); `fixacao` e `projecao` vêm como texto da API.',
  'perfume_nota': 'Pirâmide olfativa: nota por nível (saída, corpo, fundo).',
- 'perfume_acorde': 'Acordes do perfume, com intensidade quando a API informar.',
+ 'perfume_acorde': 'Acordes do perfume. `intensidade` guarda o descritor da Fragella (campo `Main Accords Percentage`, ex.: "Dominant").',
  'importacao_catalogo': 'Log de cada importação (RF-14, RF-15).',
  'diretriz_agente': 'Regras e orientações do administrador incluídas no prompt de sistema do agente (RF-25).',
  'conversa': 'Conversa do cliente com o consultor de IA (RF-21).',

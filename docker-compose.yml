@@ -1,0 +1,23 @@
+# Banco MySQL para desenvolvimento local.
+# Na primeira subida, o MySQL roda o script da 1ª Sprint e cria as tabelas com a carga inicial.
+services:
+  db:
+    image: mysql:8.4
+    container_name: modular-perfumes-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-modular_perfumes}
+      MYSQL_USER: ${MYSQL_USER:-modular}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-modular_dev}
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - dados_mysql:/var/lib/mysql
+      - ./entregas/sql/modular_perfumes_sprint1.sql:/docker-entrypoint-initdb.d/01_sprint1.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_dev}"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  dados_mysql:
