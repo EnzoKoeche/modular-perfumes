@@ -18,7 +18,7 @@ docker compose up -d db
 # 2. ambiente Python
 python3 -m venv .venv
 source .venv/bin/activate          # no Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt   # site + pytest
 cp .env.example .env               # ajuste SECRET_KEY
 
 # 3. criar um administrador (pede a senha)

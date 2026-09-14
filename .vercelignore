@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+tests/
+entregas/
+docs/
+docker-compose.yml
+pytest.ini
+requirements-dev.txt
+.DS_Store

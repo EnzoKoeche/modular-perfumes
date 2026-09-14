@@ -17,11 +17,14 @@ csrf = CSRFProtect()
 
 def create_app(config=None):
     load_dotenv()
-    app = Flask(__name__)
+    # estáticos em public/: a Vercel serve essa pasta pela CDN; localmente o Flask serve a mesma pasta
+    app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), '..', 'public', 'static'))
     app.config.update(
         SECRET_KEY=os.getenv('SECRET_KEY', 'dev-troque-no-env'),
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE='Lax',
+        SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE', '0') == '1',   # RNF-02: 1 em produção (HTTPS)
+        MYSQL_SSL_CA=os.getenv('MYSQL_SSL_CA', ''),
         MYSQL_HOST=os.getenv('MYSQL_HOST', '127.0.0.1'),
         MYSQL_PORT=int(os.getenv('MYSQL_PORT', '3307')),
         MYSQL_USER=os.getenv('MYSQL_USER', 'modular'),
