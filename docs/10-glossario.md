@@ -5,8 +5,7 @@
 | **Acorde** | Impressão olfativa dominante resultante da combinação de notas, ex.: "amadeirado", "cítrico", "baunilhado". |
 | **Agente / consultor de IA** | Conversa com o cliente usando um modelo Claude, da Anthropic, e ferramentas do sistema para consultar perfil, catálogo e ofertas. |
 | **API de catálogo** | Serviço externo de onde vêm os dados dos perfumes (nome, marca, foto, notas, acordes). |
-| **Curador olfativo** | Persona que mantém o questionário, revisa fichas e define as diretrizes do agente. |
-| **Diretriz do agente** | Regra ou orientação escrita pelo curador e incluída no prompt de sistema do agente. |
+| **Diretriz do agente** | Regra ou orientação escrita pelo administrador e incluída no prompt de sistema do agente. |
 | **Família olfativa** | Grupo de perfumes com características parecidas, ex.: floral, oriental/âmbar, amadeirado, fresco/cítrico, fougère, chypre. |
 | **Ficha do perfume** | Página com foto, marca, notas por nível, acordes e ofertas de um perfume. |
 | **Finalizar a sacola** | Ação que leva o cliente às lojas de cada perfume da sacola. Não é pagamento. |

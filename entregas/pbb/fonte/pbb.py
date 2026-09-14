@@ -1,4 +1,4 @@
-"""Canvas PBB (Product Backlog Building) do Modular Perfumes — versão 2."""
+"""Canvas PBB (Product Backlog Building) do Modular Perfumes — versão 3 (três personas)."""
 import sys
 
 from PIL import Image, ImageDraw, ImageFont
@@ -55,24 +55,6 @@ PERSONAS = [
         ],
     ),
     dict(
-        nome='Curador Olfativo',
-        faz=('Monta as perguntas do questionário', 'Revisa fichas e regras do agente'),
-        espera=('Questionário que revele o perfil', 'Recomendações confiáveis'),
-        features=[
-            ('Questionário de Perfil', ('Perguntas genéricas', 'Perfil mal definido'),
-             ('Perguntas editáveis', 'Pesos por família')),
-            ('Curadoria do Catálogo', ('Ficha incompleta da API', 'Perfume fora do padrão'),
-             ('Ficha revisada', 'Catálogo confiável')),
-            ('Diretrizes do Agente IA', ('IA sai do assunto', 'Resposta inconsistente'),
-             ('Regras do consultor', 'Tom de voz da marca')),
-        ],
-        pbis=[
-            ('Manter as perguntas do questionário', True), ('Manter as alternativas e os pesos', False),
-            ('Revisar a ficha de perfume importada', False), ('Ocultar ou reexibir perfume', False),
-            ('Manter as diretrizes do agente', False), ('Consultar as avaliações das recomendações', False),
-        ],
-    ),
-    dict(
         nome='Lojista Parceiro',
         faz=('Cadastra a loja e as ofertas', 'Acompanha os cliques recebidos'),
         espera=('Receber clientes interessados', 'Ofertas sempre corretas'),
@@ -92,20 +74,23 @@ PERSONAS = [
     ),
     dict(
         nome='Administrador',
-        faz=('Importa o catálogo pela API', 'Aprova lojistas e gerencia usuários'),
-        espera=('Catálogo completo e atualizado', 'Plataforma segura e estável'),
+        faz=('Monta o questionário de perfil', 'Importa o catálogo e aprova lojistas'),
+        espera=('Catálogo completo e confiável', 'Plataforma segura e bem configurada'),
         features=[
-            ('Catálogo via API', ('Cadastro manual lento', 'Sem foto e sem notas'),
-             ('Importação automática', 'Log de sincronização')),
-            ('Gestão de Usuários', ('Acesso sem controle', 'Lojista falso'),
-             ('Perfis de acesso', 'Aprovar ou bloquear')),
-            ('Indicadores da Plataforma', ('Decisão sem dados', 'Custo de IA oculto'),
-             ('Uso e conversas', 'Cliques e recomendações')),
+            ('Questionário de Perfil', ('Perguntas genéricas', 'Perfil mal definido'),
+             ('Perguntas editáveis', 'Pesos por família')),
+            ('Catálogo via API', ('Cadastro manual lento', 'Ficha incompleta'),
+             ('Importação automática', 'Ficha revisada')),
+            ('Gestão da Plataforma', ('Lojista falso', 'IA sai do assunto'),
+             ('Lojas aprovadas', 'Regras do consultor')),
         ],
         pbis=[
-            ('Importar os perfumes pela API de catálogo', True), ('Agendar a sincronização do catálogo', False),
-            ('Consultar o log de importações', False), ('Manter os usuários da plataforma', False),
-            ('Aprovar ou bloquear loja parceira', False), ('Consultar os indicadores de uso', False),
+            ('Manter as perguntas do questionário', True), ('Importar os perfumes pela API de catálogo', True),
+            ('Manter as alternativas e os pesos', False), ('Consultar o log de importações', False),
+            ('Agendar a sincronização do catálogo', False), ('Revisar a ficha de perfume importada', False),
+            ('Ocultar ou reexibir perfume', False), ('Aprovar ou bloquear loja parceira', False),
+            ('Manter os usuários da plataforma', False), ('Manter as diretrizes do agente', False),
+            ('Consultar as avaliações das recomendações', False), ('Consultar os indicadores de uso', False),
         ],
     ),
 ]
@@ -191,19 +176,21 @@ LEFT_W = 1180
 FRAME_T = 330
 SEC_LABEL = 78
 
-MINI_W, MINI_H, GAP = 322, 132, 18
+MINI_H, GAP = 132, 18
+PBI_POR_LINHA = 3
 BIG_W = 0  # calculado
 PERS_H = MINI_H * 2 + GAP
 FEAT_BLOCK_H = MINI_H * 2 + GAP
 FEAT_GAP = 34
 PBI_H, PBI_GAP = 160, 24
 max_feats = max(len(p['features']) for p in PERSONAS)
-max_pbi_rows = max((len(p['pbis']) + 1) // 2 for p in PERSONAS)
+max_pbi_rows = max(-(-len(p['pbis']) // PBI_POR_LINHA) for p in PERSONAS)
 
 right_x0 = M + LEFT_W
 right_x1 = W - M
 col_w = (right_x1 - right_x0) / N
 inner_pad = 34
+MINI_W = round(col_w * 0.25)
 BIG_W = col_w - 2 * inner_pad - 2 * MINI_W - 2 * GAP
 
 pers_y0 = FRAME_T
@@ -313,9 +300,9 @@ for i, p in enumerate(PERSONAS):
             text_box(d, b, t, 34, max_size=34, pad=12)
     # PBIs
     y = pbi_y0 + SEC_LABEL + 20
-    pw = (col_w - 2 * inner_pad - PBI_GAP) / 2
+    pw = (col_w - 2 * inner_pad - (PBI_POR_LINHA - 1) * PBI_GAP) / PBI_POR_LINHA
     for k, (t, s1) in enumerate(p['pbis']):
-        r, c = divmod(k, 2)
+        r, c = divmod(k, PBI_POR_LINHA)
         bx = x + c * (pw + PBI_GAP)
         by = y + r * (PBI_H + PBI_GAP)
         b = (bx, by, bx + pw, by + PBI_H)

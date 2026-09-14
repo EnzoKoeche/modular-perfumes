@@ -1,7 +1,17 @@
-"""Renderiza o DER: python3 render_der.py der.dot && dot -Tpng der.dot -o der.png"""
+"""Renderiza o DER: python3 render_der.py der.dot [sprint1] && dot -Tpng der.dot -o der.png"""
 import sys
 
-from modelo import AZUL, LARANJA, VERDE, FONT, T, R, GRUPOS
+from modelo import AZUL, LARANJA, VERDE, FONT, T, R, GRUPOS, SPRINT1
+
+# uso: python3 render_der.py saida.dot [sprint1]
+if len(sys.argv) > 2 and sys.argv[2] == 'sprint1':
+    T = {k: v for k, v in T.items() if k in SPRINT1}
+    R = [r for r in R if r[0] in T and r[1] in T]
+    GRUPOS = [(g, l, [m for m in ms if m in T]) for g, l, ms in GRUPOS]
+    GRUPOS = [g for g in GRUPOS if g[2]]
+    TITULO = 'Diagrama de Entidade e Relacionamento (Lógico) — 1ª Sprint'
+else:
+    TITULO = 'Diagrama de Entidade e Relacionamento (Lógico) — visão completa'
 
 RANKDIR, SPLINES = 'LR', 'spline'
 
@@ -28,7 +38,7 @@ out = [
     'digraph DER {',
     f'  graph [rankdir={RANKDIR}, splines={SPLINES}, nodesep=0.55, ranksep=1.1, pad=0.5, dpi=220, '
     f'fontname="{FONT}", bgcolor="white", newrank=true, '
-    f'label=<<BR/><FONT POINT-SIZE="26"><B>MODULAR PERFUMES — Diagrama de Entidade e Relacionamento (Lógico) — v2</B></FONT><BR/>'
+    f'label=<<BR/><FONT POINT-SIZE="26"><B>MODULAR PERFUMES — {TITULO}</B></FONT><BR/>'
     f'<FONT POINT-SIZE="17">PK = Chave Primária   |   FK = Chave Estrangeira   |   U = UNIQUE   |   NN = NOT NULL   |   U¹ = UNIQUE composto   |   '
     f'Pé-de-galinha: traço duplo = exatamente um  ·  traço + círculo = zero ou um  ·  pé + círculo = zero ou muitos</FONT>>, labelloc=b];',
     f'  node [shape=plaintext, fontname="{FONT}", fontsize=13];',

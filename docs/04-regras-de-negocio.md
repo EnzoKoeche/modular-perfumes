@@ -8,7 +8,7 @@
 | RN-04 | O cliente só acessa o consultor de IA, as recomendações e a sacola depois de concluir o questionário ativo. | RF-12 |
 | RN-05 | Existe **um** questionário ativo por vez. Pergunta que já recebeu resposta não é apagada: é desativada, para preservar os perfis já gerados. | RF-07 |
 | RN-06 | Toda pergunta tem pelo menos duas alternativas. Pergunta de escolha única aceita uma resposta; de múltipla escolha, uma ou mais. | RF-07, RF-08, RF-09 |
-| RN-07 | Perfume importado é identificado pelo ID da API. Reimportar atualiza o perfume em vez de duplicar, **exceto** nos campos já revisados pelo curador, que prevalecem sobre a API. | RF-13, RF-19 |
+| RN-07 | Perfume importado é identificado pelo ID da API. Reimportar atualiza o perfume em vez de duplicar, **exceto** nos campos já revisados pelo administrador, que prevalecem sobre a API. | RF-13, RF-19 |
 | RN-08 | Perfume oculto não aparece no catálogo, na busca nem nas recomendações. Continua visível na sacola de quem já o adicionou, sinalizado como indisponível. | RF-20, RF-22, RF-27 |
 | RN-09 | O agente só pode recomendar perfumes visíveis do catálogo, retornados pelas ferramentas do sistema, e deve justificar cada recomendação. Nunca informa preço ou link que não venha de uma oferta ativa. | RF-22, RF-23 |
 | RN-10 | Uma loja só publica ofertas depois de aprovada pelo administrador. Loja bloqueada tem todas as ofertas retiradas do ar. | RF-30, RF-32, RF-35 |

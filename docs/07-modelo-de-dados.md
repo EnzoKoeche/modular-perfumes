@@ -1,10 +1,12 @@
-# 07 — Modelo de dados (DER lógico v2)
+# 07 — Modelo de dados (DER lógico)
 
-Diagrama em alta resolução: [`entregas/der/Modular_Perfumes_DER_Logico.png`](../entregas/der/Modular_Perfumes_DER_Logico.png). Fonte: [`entregas/der/fonte/`](../entregas/der/fonte/).
+Diagrama da visão completa: [`entregas/der/Modular_Perfumes_DER_Logico_Completo.png`](../entregas/der/Modular_Perfumes_DER_Logico_Completo.png). Fonte: [`entregas/der/fonte/`](../entregas/der/fonte/).
 
 Legenda: **PK** chave primária · **FK** chave estrangeira · **U** único · **U¹** único composto `(loja_id, perfume_id)` · **NN** NOT NULL.
 
-Total: **26 tabelas** e **32 relacionamentos**. Este arquivo é gerado a partir da mesma definição do diagrama, então os dois não divergem.
+Total: **26 tabelas** e **32 relacionamentos** (visão completa). Este arquivo é gerado a partir da mesma definição do diagrama e do script SQL, então os três não divergem.
+
+**Tabelas da 1ª Sprint** (Artefato 6 e script SQL [`entregas/sql/`](../entregas/sql/)): `usuario`, `questionario`, `pergunta`, `alternativa`, `alternativa_peso`, `familia_olfativa`, `resposta_questionario`, `resposta_item`, `perfil_olfativo`, `perfil_familia`, `marca`, `nota_olfativa`, `acorde`, `perfume`, `perfume_nota`, `perfume_acorde`, `importacao_catalogo`. DER da Sprint 1: [`entregas/der/Modular_Perfumes_DER_Logico_Sprint1.png`](../entregas/der/Modular_Perfumes_DER_Logico_Sprint1.png).
 
 ## Acesso
 
@@ -18,7 +20,7 @@ Conta de acesso de qualquer persona. O perfil define o que a pessoa pode fazer (
 |  | `nome` | VARCHAR(80) | não |
 | U | `email` | VARCHAR(120) | não |
 |  | `senha_hash` | VARCHAR(255) | não |
-|  | `perfil` | ENUM(CLIENTE,CURADOR,LOJISTA,ADMIN) | não |
+|  | `perfil` | ENUM(CLIENTE,LOJISTA,ADMIN) | não |
 |  | `ativo` | TINYINT(1) | não |
 |  | `tentativas_login` | TINYINT | não |
 |  | `bloqueado_ate` | DATETIME | sim |
@@ -40,7 +42,7 @@ Questionário de perfil olfativo. Só um fica ativo por vez (RN-05).
 
 ### `pergunta`
 
-Pergunta do questionário, mantida pelo curador (RF-07). Pergunta respondida é desativada, não apagada.
+Pergunta do questionário, mantida pelo administrador (RF-07). Pergunta respondida é desativada, não apagada.
 
 | Chave | Coluna | Tipo | Nulo |
 |---|---|---|---|
@@ -163,7 +165,7 @@ Acorde vindo da API (ex.: amadeirado); `familia_id` liga o acorde a uma família
 
 ### `perfume`
 
-Perfume importado da API (RF-13). `api_id` evita duplicar na reimportação; `campos_revisados` guarda os campos que o curador alterou e que a API não sobrescreve (RN-07). `imagem_url` aponta para a imagem servida pela API, sem copiar o arquivo (RNF-19, R-02); `fixacao` e `projecao` vêm como texto da API.
+Perfume importado da API (RF-13). `api_id` evita duplicar na reimportação; `campos_revisados` guarda os campos que o administrador alterou e que a API não sobrescreve (RN-07). `imagem_url` aponta para a imagem servida pela API, sem copiar o arquivo (RNF-19, R-02); `fixacao` e `projecao` vêm como texto da API.
 
 | Chave | Coluna | Tipo | Nulo |
 |---|---|---|---|
@@ -221,7 +223,7 @@ Log de cada importação (RF-14, RF-15).
 
 ### `diretriz_agente`
 
-Regras e orientações do curador incluídas no prompt de sistema do agente (RF-25).
+Regras e orientações do administrador incluídas no prompt de sistema do agente (RF-25).
 
 | Chave | Coluna | Tipo | Nulo |
 |---|---|---|---|

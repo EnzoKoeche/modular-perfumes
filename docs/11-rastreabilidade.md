@@ -6,10 +6,10 @@ Liga cada objetivo de negócio às features, aos PBIs, aos requisitos e às tabe
 
 | Objetivo | Features que atendem |
 |---|---|
-| **O1** — Descobrir perfumes que combinam com o perfil (questionário + agente) | Conta e Perfil Olfativo · Questionário de Perfil · Consultor Olfativo por IA · Diretrizes do Agente IA |
-| **O2** — Catálogo completo e confiável, importado e revisado | Catálogo via API · Curadoria do Catálogo |
-| **O3** — Levar o cliente às lojas parceiras | Sacola e Compra nas Lojas · Cadastro da Loja · Gestão de Ofertas · Relatório de Cliques |
-| Suporte a todos | Gestão de Usuários · Indicadores da Plataforma |
+| **O1** — Descobrir perfumes que combinam com o perfil (questionário + agente) | Conta e Perfil Olfativo · Questionário de Perfil · Consultor Olfativo por IA · Gestão da Plataforma (diretrizes do agente) |
+| **O2** — Catálogo completo e confiável, importado e revisado | Catálogo via API |
+| **O3** — Levar o cliente às lojas parceiras | Sacola e Compra nas Lojas · Cadastro da Loja · Gestão de Ofertas · Relatório de Cliques · Gestão da Plataforma (aprovação de lojas) |
+| Suporte a todos | Gestão da Plataforma (usuários, lojas e indicadores) |
 
 ## PBI → requisitos → tabelas
 

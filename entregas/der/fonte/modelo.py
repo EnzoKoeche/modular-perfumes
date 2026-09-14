@@ -18,7 +18,7 @@ tabela('usuario', LARANJA, [
     ('', 'nome', 'VARCHAR(80)', 'NN'),
     ('U', 'email', 'VARCHAR(120)', 'NN'),
     ('', 'senha_hash', 'VARCHAR(255)', 'NN'),
-    ('', 'perfil', 'ENUM(CLIENTE,CURADOR,LOJISTA,ADMIN)', 'NN'),
+    ('', 'perfil', 'ENUM(CLIENTE,LOJISTA,ADMIN)', 'NN'),
     ('', 'ativo', 'TINYINT(1)', 'NN'),
     ('', 'tentativas_login', 'TINYINT', 'NN'),
     ('', 'bloqueado_ate', 'DATETIME', 'NULL'),
@@ -263,3 +263,45 @@ GRUPOS = [
     ('sacola', 'SACOLA E LOJAS PARCEIRAS', ['sacola_item', 'loja', 'oferta', 'clique_oferta']),
 ]
 
+
+# ---------------------------------------------------------------- escopo da Sprint 1
+# Tabelas que as user stories da 1ª Sprint gravam ou leem (cadastro, login, questionário,
+# perguntas e importação do catálogo). `alternativa_peso` e `familia_olfativa` entram porque
+# gerar o perfil olfativo (US3) usa os pesos, que vêm da carga inicial do script SQL.
+SPRINT1 = [
+    'usuario',
+    'questionario', 'pergunta', 'alternativa', 'alternativa_peso', 'familia_olfativa',
+    'resposta_questionario', 'resposta_item', 'perfil_olfativo', 'perfil_familia',
+    'marca', 'nota_olfativa', 'acorde', 'perfume', 'perfume_nota', 'perfume_acorde',
+    'importacao_catalogo',
+]
+
+# coluna FK -> tabela referenciada
+FK_REF = {
+    'usuario_id': 'usuario', 'questionario_id': 'questionario', 'pergunta_id': 'pergunta',
+    'alternativa_id': 'alternativa', 'familia_id': 'familia_olfativa', 'resposta_id': 'resposta_questionario',
+    'perfil_id': 'perfil_olfativo', 'marca_id': 'marca', 'nota_id': 'nota_olfativa', 'acorde_id': 'acorde',
+    'perfume_id': 'perfume', 'conversa_id': 'conversa', 'recomendacao_id': 'recomendacao',
+    'loja_id': 'loja', 'oferta_id': 'oferta', 'decidido_por': 'usuario',
+}
+
+# (tabela, coluna) com ON DELETE diferente de RESTRICT
+ON_DELETE = {
+    ('alternativa_peso', 'alternativa_id'): 'CASCADE',
+    ('resposta_questionario', 'usuario_id'): 'CASCADE',   # RN-17: excluir conta apaga respostas
+    ('resposta_item', 'resposta_id'): 'CASCADE',
+    ('perfil_olfativo', 'usuario_id'): 'CASCADE',         # RN-17
+    ('perfil_olfativo', 'resposta_id'): 'CASCADE',
+    ('perfil_familia', 'perfil_id'): 'CASCADE',
+    ('perfume_nota', 'perfume_id'): 'CASCADE',
+    ('perfume_acorde', 'perfume_id'): 'CASCADE',
+    ('acorde', 'familia_id'): 'SET NULL',
+    ('conversa', 'usuario_id'): 'CASCADE',
+    ('mensagem', 'conversa_id'): 'CASCADE',
+    ('recomendacao', 'conversa_id'): 'CASCADE',
+    ('avaliacao_recomendacao', 'recomendacao_id'): 'CASCADE',
+    ('sacola_item', 'usuario_id'): 'CASCADE',
+    ('clique_oferta', 'usuario_id'): 'SET NULL',          # RN-17: clique fica anonimizado
+    ('loja', 'decidido_por'): 'SET NULL',
+    ('oferta', 'loja_id'): 'CASCADE',
+}

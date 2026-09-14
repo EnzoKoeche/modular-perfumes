@@ -11,9 +11,9 @@
 | ID | Requisito | Persona | Prioridade | PBI |
 |---|---|---|---|---|
 | RF-01 | O sistema deve permitir que um visitante crie uma conta de cliente informando nome, e-mail e senha. | Cliente | Sprint 1 | Realizar o cadastro do cliente |
-| RF-02 | O sistema deve autenticar qualquer usuário (cliente, curador, lojista, administrador) por e-mail e senha e abrir uma sessão. | Todas | Sprint 1 | Realizar o login na plataforma |
+| RF-02 | O sistema deve autenticar qualquer usuário (cliente, lojista, administrador) por e-mail e senha e abrir uma sessão. | Todas | Sprint 1 | Realizar o login na plataforma |
 | RF-03 | O sistema deve permitir encerrar a sessão (logout) a qualquer momento. | Todas | Sprint 1 | Realizar o login na plataforma |
-| RF-04 | O sistema deve restringir cada tela e cada operação ao perfil de acesso correspondente (`CLIENTE`, `CURADOR`, `LOJISTA`, `ADMIN`). | Todas | Sprint 1 | Realizar o login na plataforma |
+| RF-04 | O sistema deve restringir cada tela e cada operação ao perfil de acesso correspondente (`CLIENTE`, `LOJISTA`, `ADMIN`). | Todas | Sprint 1 | Realizar o login na plataforma |
 | RF-05 | O sistema deve permitir que o cliente consulte e altere os dados da própria conta e altere a senha. **(R, U)** | Cliente | Média | Manter os dados da conta do cliente |
 | RF-06 | O sistema deve permitir que o cliente exclua a própria conta, removendo os dados pessoais conforme a RN-17. **(D)** | Cliente | Média | Manter os dados da conta do cliente |
 
@@ -21,8 +21,8 @@
 
 | ID | Requisito | Persona | Prioridade | PBI |
 |---|---|---|---|---|
-| RF-07 | O sistema deve permitir que o curador cadastre, liste, altere e desative perguntas do questionário, com enunciado, tipo de resposta (única ou múltipla escolha), ordem e obrigatoriedade. **(CRUD)** | Curador | Sprint 1 | Manter as perguntas do questionário |
-| RF-08 | O sistema deve permitir que o curador mantenha as alternativas de cada pergunta e o peso de cada alternativa para cada família olfativa. **(CRUD)** | Curador | Alta | Manter as alternativas e os pesos |
+| RF-07 | O sistema deve permitir que o administrador cadastre, liste, altere e desative perguntas do questionário, com enunciado, tipo de resposta (única ou múltipla escolha), ordem e obrigatoriedade. **(CRUD)** | Administrador | Sprint 1 | Manter as perguntas do questionário |
+| RF-08 | O sistema deve permitir que o administrador mantenha as alternativas de cada pergunta e o peso de cada alternativa para cada família olfativa. **(CRUD)** | Administrador | Alta | Manter as alternativas e os pesos |
 | RF-09 | O sistema deve apresentar ao cliente as perguntas ativas do questionário, na ordem definida, e gravar as respostas à medida que ele avança. | Cliente | Sprint 1 | Responder o questionário de perfil olfativo |
 | RF-10 | O sistema deve retomar um questionário não concluído a partir da primeira pergunta sem resposta. | Cliente | Sprint 1 | Responder o questionário de perfil olfativo |
 | RF-11 | Ao concluir o questionário, o sistema deve gerar o perfil olfativo do cliente: nível de conhecimento e afinidade com cada família olfativa, calculada pelos pesos das alternativas escolhidas. | Cliente | Sprint 1 | Responder o questionário de perfil olfativo |
@@ -37,9 +37,9 @@
 | RF-15 | O sistema deve permitir que o administrador consulte o log de importações. **(R)** | Administrador | Alta | Consultar o log de importações |
 | RF-16 | O sistema deve permitir agendar a sincronização periódica do catálogo (ex.: semanal), respeitando os limites da API. | Administrador | Média | Agendar a sincronização do catálogo |
 | RF-17 | O sistema deve exibir a ficha do perfume: foto, nome, marca, gênero, notas de saída, corpo e fundo, acordes e as ofertas ativas. | Cliente | Alta | Consultar a ficha do perfume |
-| RF-18 | O sistema deve permitir buscar perfumes do catálogo por nome, marca e família olfativa. | Cliente, Lojista, Curador | Alta | Buscar perfume do catálogo para ofertar |
-| RF-19 | O sistema deve permitir que o curador altere os dados de uma ficha importada; o campo alterado passa a prevalecer sobre a API (RN-07). **(U)** | Curador | Média | Revisar a ficha de perfume importada |
-| RF-20 | O sistema deve permitir que o curador oculte e reexiba um perfume. Perfume oculto não aparece no catálogo nem pode ser recomendado. **(D lógico)** | Curador | Média | Ocultar ou reexibir perfume |
+| RF-18 | O sistema deve permitir buscar perfumes do catálogo por nome, marca e família olfativa. | Cliente, Lojista, Administrador | Alta | Buscar perfume do catálogo para ofertar |
+| RF-19 | O sistema deve permitir que o administrador altere os dados de uma ficha importada; o campo alterado passa a prevalecer sobre a API (RN-07). **(U)** | Administrador | Média | Revisar a ficha de perfume importada |
+| RF-20 | O sistema deve permitir que o administrador oculte e reexiba um perfume. Perfume oculto não aparece no catálogo nem pode ser recomendado. **(D lógico)** | Administrador | Média | Ocultar ou reexibir perfume |
 
 ## Módulo IA — Consultor olfativo
 
@@ -49,8 +49,8 @@
 | RF-22 | O agente deve consultar o perfil olfativo do cliente, buscar perfumes no catálogo e consultar ofertas por meio de ferramentas do sistema, sem inventar perfume, preço ou link. | Cliente | Alta | Receber as recomendações personalizadas |
 | RF-23 | O sistema deve registrar cada perfume recomendado na conversa, com a posição e a justificativa, e exibi-lo como cartão com foto, botão "ver ficha" e botão "adicionar à sacola". | Cliente | Alta | Receber as recomendações personalizadas |
 | RF-24 | O sistema deve permitir que o cliente avalie uma recomendação com nota de 1 a 5 e comentário opcional. **(C)** | Cliente | Média | Avaliar a recomendação recebida |
-| RF-25 | O sistema deve permitir que o curador mantenha as diretrizes do agente (regras, limites e tom de voz), aplicadas às conversas seguintes. **(CRUD)** | Curador | Média | Manter as diretrizes do agente |
-| RF-26 | O sistema deve permitir que o curador consulte as avaliações das recomendações, com filtro por nota e período. **(R)** | Curador | Média | Consultar as avaliações das recomendações |
+| RF-25 | O sistema deve permitir que o administrador mantenha as diretrizes do agente (regras, limites e tom de voz), aplicadas às conversas seguintes. **(CRUD)** | Administrador | Média | Manter as diretrizes do agente |
+| RF-26 | O sistema deve permitir que o administrador consulte as avaliações das recomendações, com filtro por nota e período. **(R)** | Administrador | Média | Consultar as avaliações das recomendações |
 
 ## Módulo SAC — Sacola e redirecionamento
 
@@ -83,10 +83,10 @@
 | Entidade | Quem mantém | C | R | U | D |
 |---|---|---|---|---|---|
 | Usuário (conta) | Cliente (a própria) / Administrador (todas) | RF-01, RF-36 | RF-05, RF-36 | RF-05, RF-36 | RF-06, RF-36 |
-| Pergunta do questionário | Curador | RF-07 | RF-07 | RF-07 | RF-07 (desativa) |
-| Alternativa e peso | Curador | RF-08 | RF-08 | RF-08 | RF-08 |
-| Perfume | Administrador (importa) / Curador (revisa) | RF-13 | RF-17, RF-18 | RF-19 | RF-20 (oculta) |
-| Diretriz do agente | Curador | RF-25 | RF-25 | RF-25 | RF-25 |
+| Pergunta do questionário | Administrador | RF-07 | RF-07 | RF-07 | RF-07 (desativa) |
+| Alternativa e peso | Administrador | RF-08 | RF-08 | RF-08 | RF-08 |
+| Perfume | Administrador (importa e revisa) | RF-13 | RF-17, RF-18 | RF-19 | RF-20 (oculta) |
+| Diretriz do agente | Administrador | RF-25 | RF-25 | RF-25 | RF-25 |
 | Loja | Lojista / Administrador | RF-30 | RF-31 | RF-31, RF-35 | RF-35 (bloqueia) |
 | Oferta | Lojista | RF-32 | RF-32 | RF-32, RF-33 | RF-32 |
 | Item da sacola | Cliente | RF-27 | RF-27 | — | RF-27 |

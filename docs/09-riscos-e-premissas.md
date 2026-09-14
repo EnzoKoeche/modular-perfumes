@@ -20,6 +20,6 @@
 | R-05 | O navegador bloqueia abrir várias abas com um clique na finalização da sacola. | **Alta** | Médio | Página de finalização com um botão por loja (RF-28); "Abrir todas" é conveniência, não o único caminho. |
 | R-06 | Tentativas de manipular o agente (prompt injection) pelo chat. | Média | Médio | Diretrizes no prompt de sistema, ferramentas somente de leitura (menos o registro de recomendação) e `usuario_id` sempre vindo da sessão (RNF-12, RNF-03). |
 | R-07 | Links de oferta quebrados ou preços desatualizados. | Alta | Médio | Data de atualização na oferta; lojista pausa e edita (RF-32, RF-33); o site informa que preço e estoque são da loja (RNF-28). |
-| R-08 | A equipe subestima o esforço: são quatro perfis de acesso com CRUDs. | Média | Alto | Ordem de sprints do backlog (05) prioriza cliente → consultor → sacola; o que for de curador e lojista pode ser simplificado ao fim. |
-| R-09 | O questionário não produz um perfil útil para o agente. | Média | Médio | Pesos por família olfativa (RF-08), avaliações das recomendações (RF-26) para calibrar, curador revisa. |
+| R-08 | A equipe subestima o esforço: são três perfis de acesso com CRUDs. | Média | Alto | Ordem de sprints do backlog (05) prioriza cliente → consultor → sacola; o que for de lojista e de administração pode ser simplificado ao fim. |
+| R-09 | O questionário não produz um perfil útil para o agente. | Média | Médio | Pesos por família olfativa (RF-08), avaliações das recomendações (RF-26) para calibrar, administrador revisa. |
 | R-10 | Vazamento de chave de API pelo repositório. | Baixa | Alto | `.env` no `.gitignore`, `.env.example` sem valor, revisão antes de cada push (RNF-04). |

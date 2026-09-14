@@ -118,7 +118,7 @@ Ordem do que vai para a API: **ferramentas → prompt de sistema → mensagens**
 2. **Prompt de sistema** (com `cache_control`):
    - identidade do consultor e o que ele pode e não pode fazer (RN-09, RN-16, RN-18);
    - regra contra manipulação: instruções do cliente não mudam estas regras (RNF-12);
-   - as **diretrizes ativas do curador** (RF-25), que mudam raramente; quando mudam, o cache se renova sozinho.
+   - as **diretrizes ativas definidas pelo administrador** (RF-25), que mudam raramente; quando mudam, o cache se renova sozinho.
 3. **Mensagens:** o histórico da conversa, só acrescentando no fim, sem reescrever mensagens antigas.
 
 O perfil do cliente **não** vai no prompt de sistema: entra pela ferramenta `obter_perfil_olfativo`. Assim o prompt de sistema é o mesmo para todos os clientes e o cache é compartilhado. Data, hora e IDs nunca entram antes do ponto de cache (RNF-15). Para conferir, `usage.cache_read_input_tokens` deve ser maior que zero a partir da segunda mensagem. O cache só existe acima de um tamanho mínimo de prefixo, que varia por modelo: se ferramentas e prompt de sistema forem curtos demais, ele não liga, e isso aparece nesse mesmo campo zerado.

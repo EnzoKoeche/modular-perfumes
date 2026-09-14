@@ -19,7 +19,7 @@ Quem compra perfume pela internet não pode sentir o cheiro antes. A maioria das
 | # | Objetivo |
 |---|---|
 | 1 | Ajudar quem não entende de perfumaria a descobrir os perfumes que combinam com o próprio perfil, por meio de um questionário de perfil olfativo e de um agente de IA que conversa com o cliente antes de recomendar. |
-| 2 | Reunir em um único lugar um catálogo completo e confiável — foto, notas olfativas e acordes de cada perfume —, importado de uma API externa e revisado por um curador olfativo. |
+| 2 | Reunir em um único lugar um catálogo completo e confiável — foto, notas olfativas e acordes de cada perfume —, importado de uma API externa e revisado pelo administrador. |
 | 3 | Levar o cliente até as lojas parceiras onde comprar os perfumes escolhidos, gerando cliques qualificados para os lojistas e reduzindo a compra às cegas e o arrependimento. |
 
 ## É / Não é / Faz / Não faz (Artefato 2)
@@ -37,7 +37,7 @@ Quem compra perfume pela internet não pode sentir o cheiro antes. A maioria das
 | Conversa com o cliente e recomenda perfumes, explicando o motivo de cada indicação. | Não entrega nem troca produtos: a compra e o pós-venda são responsabilidade da loja. |
 | Mostra a ficha de cada perfume: foto, notas de saída, corpo e fundo, e acordes. | Não garante a percepção do cheiro na pele de cada pessoa. |
 | Guarda na sacola os perfumes de que o cliente gostou e, ao finalizar, abre a página da loja de cada um. | Não libera o consultor de IA sem login e sem o questionário respondido. |
-| Permite ao curador manter o questionário, ao lojista manter suas ofertas e ao administrador importar o catálogo e gerenciar os usuários. | |
+| Permite ao administrador manter o questionário, importar o catálogo e aprovar lojas, e ao lojista manter suas ofertas. | |
 
 ## Visão de produto (Artefato 3)
 
@@ -57,3 +57,4 @@ Em uma frase: *para quem quer comprar perfume pela internet e não sabe qual esc
 |---|---|---|
 | 2026-08-31 | Visão entregue: e-commerce de perfumaria com agentes de IA. Personas "Cliente Iniciante", "Cliente Entusiasta" e "Administrador". | Entrega dos artefatos 1–6. |
 | 2026-09-14 | O produto passa a ser o **consultor de IA**: questionário de perfil obrigatório, catálogo via API, compra em lojas parceiras por redirecionamento, CRUDs explícitos. Personas: Cliente, Curador Olfativo, Lojista Parceiro e Administrador. | Feedback do professor: as personas eram "cliente, cliente", as features precisavam mudar e o sistema precisa de login e CRUD. |
+| 2026-09-14 | **Três personas** (Cliente, Lojista Parceiro, Administrador): o papel de curador passa ao Administrador. User stories com a persona no COMO e o benefício da feature no PARA; Artefato 6 e script SQL recortados para a 1ª Sprint. | Enunciados da 1ª Sprint: a rubrica pede três personas, CA1 = fluxo principal e CA2 = exceção, e o script SQL do banco. |
