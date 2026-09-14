@@ -75,6 +75,14 @@ def _ano(valor):
     return int(v) if v.isdigit() and 1800 <= int(v) <= 2100 else None
 
 
+def _nota(valor):
+    try:
+        nota = float(str(valor).replace(',', '.'))
+    except (TypeError, ValueError):
+        return None
+    return round(nota, 2) if 0 <= nota <= 10 else None
+
+
 def _nomes(lista):
     """Notas podem vir como texto ou como objeto com nome e imageUrl."""
     nomes = []
@@ -115,6 +123,9 @@ def gravar_perfume(dado):
         'imagem_url': (dado.get('Image URL') or None),
         'fixacao': (dado.get('Longevity') or None),
         'projecao': (dado.get('Sillage') or None),
+        'concentracao': (dado.get('OilType') or None),
+        'avaliacao': _nota(dado.get('rating')),
+        'popularidade': (str(dado.get('Popularity') or '')[:30] or None),
     }
     existente = db.consultar_um('SELECT id, campos_revisados FROM perfume WHERE api_id = %s', (api_id,))
     if existente:                                       # US5 CA3: atualiza sem duplicar

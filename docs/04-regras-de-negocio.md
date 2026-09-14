@@ -2,7 +2,7 @@
 
 | ID | Regra | Onde se aplica |
 |---|---|---|
-| RN-01 | O uso da plataforma é **gratuito**, mas toda funcionalidade além da página inicial exige conta e login. | RF-01, RF-02 |
+| RN-01 | O uso da plataforma é **gratuito**. A página inicial e a vitrine de perfumes são públicas; questionário, consultor de IA e sacola exigem conta e login. | RF-01, RF-02, RF-17 |
 | RN-02 | O e-mail é único entre todos os usuários, de qualquer perfil. | RF-01, RF-30, RF-36 |
 | RN-03 | A senha deve ter no mínimo 8 caracteres e é guardada somente como hash (ver RNF-01). | RF-01, RF-05 |
 | RN-04 | O cliente só acessa o consultor de IA, as recomendações e a sacola depois de concluir o questionário ativo. | RF-12 |

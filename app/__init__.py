@@ -29,6 +29,8 @@ def create_app(config=None):
         MYSQL_DATABASE=os.getenv('MYSQL_DATABASE', 'modular_perfumes'),
         CATALOGO_PROVEDOR=os.getenv('CATALOGO_PROVEDOR', 'exemplo'),
         FRAGELLA_API_KEY=os.getenv('FRAGELLA_API_KEY', ''),
+        IA_MODELO=os.getenv('IA_MODELO', 'claude-opus-5'),
+        IA_ESFORCO=os.getenv('IA_ESFORCO', 'medium'),
     )
     if config:
         app.config.update(config)
@@ -40,10 +42,26 @@ def create_app(config=None):
     from .questionario import bp as questionario_bp
     from .cliente import bp as cliente_bp
     from .admin import bp as admin_bp
+    from .consultor import bp as consultor_bp
+    from .vitrine import bp as vitrine_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(questionario_bp)
     app.register_blueprint(cliente_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(consultor_bp)
+    app.register_blueprint(vitrine_bp)
+
+    @app.template_filter('genero')
+    def genero_legivel(valor):
+        return {'MASCULINO': 'Masculino', 'FEMININO': 'Feminino', 'UNISSEX': 'Unissex'}.get(valor or '', '')
+
+    @app.template_filter('nivel')
+    def nivel_legivel(valor):
+        return {'INICIANTE': 'Iniciante', 'INTERMEDIARIO': 'Intermediário', 'AVANCADO': 'Avançado'}.get(valor or '', '')
+
+    @app.template_filter('nota_nivel')
+    def nota_nivel_legivel(valor):
+        return {'SAIDA': 'Saída', 'CORPO': 'Corpo', 'FUNDO': 'Fundo'}.get(valor or '', '')
 
     @app.context_processor
     def injeta_usuario():
@@ -51,7 +69,11 @@ def create_app(config=None):
 
     @app.route('/')
     def index():
-        return render_template('index.html')
+        from .vitrine import COLUNAS
+        destaques = db.consultar(
+            f'SELECT {COLUNAS} FROM perfume p JOIN marca m ON m.id = p.marca_id '
+            'WHERE p.visivel = 1 AND p.avaliacao IS NOT NULL ORDER BY p.avaliacao DESC LIMIT 4')
+        return render_template('index.html', destaques=destaques)
 
     @app.cli.command('criar-admin')
     @click.argument('email')

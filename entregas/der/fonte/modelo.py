@@ -111,6 +111,9 @@ tabela('perfume', LARANJA, [
     ('', 'imagem_url', 'VARCHAR(500)', 'NULL'),
     ('', 'fixacao', 'VARCHAR(40)', 'NULL'),
     ('', 'projecao', 'VARCHAR(40)', 'NULL'),
+    ('', 'concentracao', 'VARCHAR(40)', 'NULL'),
+    ('', 'avaliacao', 'DECIMAL(4,2)', 'NULL'),
+    ('', 'popularidade', 'VARCHAR(30)', 'NULL'),
     ('', 'descricao', 'TEXT', 'NULL'),
     ('', 'visivel', 'TINYINT(1)', 'NN'),
     ('', 'campos_revisados', 'JSON', 'NULL'),
@@ -275,6 +278,9 @@ SPRINT1 = [
     'marca', 'nota_olfativa', 'acorde', 'perfume', 'perfume_nota', 'perfume_acorde',
     'importacao_catalogo',
 ]
+
+# Tabelas que entram na 2ª Sprint (consultor de IA), criadas por um script próprio
+SPRINT2 = ['conversa', 'mensagem', 'recomendacao']
 
 # coluna FK -> tabela referenciada
 FK_REF = {

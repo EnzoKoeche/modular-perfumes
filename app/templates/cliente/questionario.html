@@ -6,6 +6,7 @@
     <h1 class="h3">{{ questionario.titulo }}</h1>
     <p class="text-muted">Conte um pouco do seu gosto. Com o perfil pronto, o consultor de IA é liberado para você. Perguntas com <span class="text-danger">*</span> são obrigatórias.</p>
     {% set respondidas = perguntas|selectattr('id', 'in', salvas.keys()|list)|list|length %}
+    <div class="d-flex justify-content-between small text-muted mb-1"><span class="mono">PROGRESSO</span><span>{{ respondidas }} de {{ perguntas|length }}</span></div>
     <div class="progress mb-4" role="progressbar" aria-label="Progresso" aria-valuenow="{{ respondidas }}" aria-valuemin="0" aria-valuemax="{{ perguntas|length }}">
       <div class="progress-bar" style="width: {{ (100 * respondidas / (perguntas|length or 1))|round }}%; background: var(--mp-dourado)">{{ respondidas }} de {{ perguntas|length }}</div>
     </div>

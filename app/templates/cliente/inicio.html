@@ -5,7 +5,7 @@
   <div class="col-lg-7">
     <div class="card border-0 shadow-sm"><div class="card-body p-4">
       <h1 class="h4">Seu perfil olfativo</h1>
-      <p class="text-muted mb-3">Nível de conhecimento: <span class="badge mp-badge">{{ perfil.nivel_conhecimento|replace('INTERMEDIARIO', 'intermediário')|replace('AVANCADO', 'avançado')|lower }}</span> · gerado em {{ perfil.gerado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+      <p class="text-muted mb-3">Nível de conhecimento: <span class="badge mp-badge">{{ perfil.nivel_conhecimento|nivel }}</span> · gerado em {{ perfil.gerado_em.strftime('%d/%m/%Y %H:%M') }}</p>
       {% for f in familias %}
         <div class="mb-3">
           <div class="d-flex justify-content-between small"><strong>{{ f.nome }}</strong><span>{{ '%.0f'|format(100 * f.afinidade / maior) }}%</span></div>
@@ -20,9 +20,11 @@
   </div>
   <div class="col-lg-5">
     <div class="card border-0 shadow-sm"><div class="card-body p-4">
-      <h2 class="h5"><i class="bi bi-chat-heart"></i> Consultor olfativo</h2>
-      <p class="text-muted">Seu acesso está liberado. O consultor de IA, que usa este perfil para recomendar perfumes, chega na próxima sprint.</p>
-      <button class="btn mp-btn" disabled>Conversar com o consultor · Sprint 2</button>
+      <span class="chip mb-2"><i class="bi bi-cpu"></i> AGENTE DE IA</span>
+      <h2 class="h5">Consultor olfativo</h2>
+      <p class="text-muted">Seu acesso está liberado. O agente de IA usa este perfil para buscar no catálogo e explicar por que cada perfume combina com você.</p>
+      <a class="btn mp-btn-grad" href="{{ url_for('consultor.pagina') }}"><i class="bi bi-cpu"></i> Conversar com o consultor</a>
+      <a class="btn btn-outline-secondary ms-1" href="{{ url_for('vitrine.lista') }}">Ver perfumes</a>
     </div></div>
   </div>
 </div>

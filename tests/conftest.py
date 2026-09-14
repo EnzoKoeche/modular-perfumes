@@ -12,14 +12,15 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-SCRIPT = RAIZ / 'entregas' / 'sql' / 'modular_perfumes_sprint1.sql'
+SCRIPTS = [RAIZ / 'entregas' / 'sql' / 'modular_perfumes_sprint1.sql',
+           RAIZ / 'entregas' / 'sql' / 'modular_perfumes_sprint2.sql']
 BANCO_TESTE = 'modular_perfumes_teste'
 CONEXAO = dict(host=os.getenv('MYSQL_HOST', '127.0.0.1'), port=int(os.getenv('MYSQL_PORT', '3307')),
                user='root', password=os.getenv('MYSQL_ROOT_PASSWORD', 'root_dev'), charset='utf8mb4')
 
 
 def recriar_banco():
-    sql = SCRIPT.read_text(encoding='utf-8')
+    sql = '\n'.join(p.read_text(encoding='utf-8') for p in SCRIPTS)
     sql = sql.replace('CREATE DATABASE IF NOT EXISTS modular_perfumes', f'CREATE DATABASE IF NOT EXISTS {BANCO_TESTE}')
     sql = sql.replace('USE modular_perfumes;', f'USE {BANCO_TESTE};')
     con = pymysql.connect(client_flag=pymysql.constants.CLIENT.MULTI_STATEMENTS, autocommit=True, **CONEXAO)

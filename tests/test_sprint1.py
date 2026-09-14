@@ -3,8 +3,9 @@ import re
 
 import requests
 
-RESPOSTAS_COMPLETAS = {  # alternativas da carga inicial: 1 pergunta de nível + 4 de gosto
+RESPOSTAS_COMPLETAS = {  # alternativas da carga inicial (perguntas 1 a 10 são obrigatórias; a 11 não)
     'pergunta_1': '1', 'pergunta_2': ['4', '7'], 'pergunta_3': ['9', '13'], 'pergunta_4': '15', 'pergunta_5': '19',
+    'pergunta_6': '22', 'pergunta_7': '26', 'pergunta_8': '28', 'pergunta_9': '31', 'pergunta_10': '35',
 }
 
 
@@ -82,7 +83,7 @@ def test_us3_ca1_concluir_gera_perfil_e_libera_consultor(client, banco):
     assert perfil['nivel_conhecimento'] == 'INICIANTE'
     afinidades = {r['nome']: float(r['afinidade']) for r in banco(
         'SELECT f.nome, pf.afinidade FROM perfil_familia pf JOIN familia_olfativa f ON f.id = pf.familia_id')}
-    assert afinidades['Fresco/Cítrico'] == 10.0 and afinidades['Aquático'] == 9.0
+    assert afinidades['Fresco/Cítrico'] == 12.0 and afinidades['Aquático'] == 10.0
     assert 'Seu perfil olfativo' in client.get('/inicio').get_data(as_text=True)
 
 
@@ -125,7 +126,7 @@ def test_us4_ca2_sem_enunciado_ou_com_menos_de_duas_alternativas(admin, banco):
         resp = admin.post('/admin/perguntas/nova', data={**dados, 'tipo': 'UNICA'})
         assert resp.status_code == 400
         assert 'Informe o enunciado e pelo menos duas alternativas' in resp.get_data(as_text=True)
-    assert banco("SELECT COUNT(*) AS n FROM pergunta")[0]['n'] == 5
+    assert banco("SELECT COUNT(*) AS n FROM pergunta")[0]['n'] == 11
 
 
 def test_us4_ca3_excluir_pergunta_respondida_desativa(client, app, banco):
@@ -203,3 +204,9 @@ def test_us5_ca3_reimportar_atualiza_sem_duplicar(admin, banco):
     assert banco("SELECT COUNT(*) AS n FROM perfume")[0]['n'] == 3
     ultimo = banco("SELECT qtd_incluidos, qtd_atualizados FROM importacao_catalogo ORDER BY id DESC LIMIT 1")[0]
     assert ultimo == {'qtd_incluidos': 0, 'qtd_atualizados': 3}
+
+
+def test_acentos_gravados_corretamente(client, banco):
+    """O script SQL declara utf8mb4; acentos não podem virar "Ã©" no banco."""
+    assert banco("SELECT nome FROM familia_olfativa WHERE id = 2")[0]['nome'] == 'Fresco/Cítrico'
+    assert 'você' in banco("SELECT enunciado FROM pergunta WHERE id = 1")[0]['enunciado']

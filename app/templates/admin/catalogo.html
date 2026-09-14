@@ -48,10 +48,10 @@
       {% for p in perfumes %}
         <div class="d-flex gap-3 py-3 border-bottom">
           {% if p.imagem_url %}<img class="frasco" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}" loading="lazy">
-          {% else %}<div class="frasco d-flex align-items-center justify-content-center"><i class="bi bi-droplet fs-4 text-muted"></i></div>{% endif %}
+          {% else %}<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
           <div class="flex-grow-1">
             <div class="fw-semibold">{{ p.nome }} <span class="text-muted fw-normal">· {{ p.marca }}</span></div>
-            <div class="small text-muted">{{ (p.genero or '')|lower }}{% if p.ano %} · {{ p.ano }}{% endif %}{% if p.fixacao %} · fixação: {{ p.fixacao }}{% endif %}{% if p.projecao %} · projeção: {{ p.projecao }}{% endif %}</div>
+            <div class="small text-muted">{{ p.genero|genero }}{% if p.ano %} · {{ p.ano }}{% endif %}{% if p.fixacao %} · fixação: {{ p.fixacao }}{% endif %}{% if p.projecao %} · projeção: {{ p.projecao }}{% endif %}</div>
             {% if p.notas %}<div class="small"><strong>Notas:</strong> {{ p.notas }}</div>{% endif %}
             {% if p.acordes %}<div class="small"><strong>Acordes:</strong> {{ p.acordes }}</div>{% endif %}
             <div class="small text-muted">ID na API: {{ p.api_id }}</div>

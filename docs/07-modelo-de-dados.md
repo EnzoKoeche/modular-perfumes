@@ -178,6 +178,9 @@ Perfume importado da API (RF-13). `api_id` evita duplicar na reimportação; `ca
 |  | `imagem_url` | VARCHAR(500) | sim |
 |  | `fixacao` | VARCHAR(40) | sim |
 |  | `projecao` | VARCHAR(40) | sim |
+|  | `concentracao` | VARCHAR(40) | sim |
+|  | `avaliacao` | DECIMAL(4,2) | sim |
+|  | `popularidade` | VARCHAR(30) | sim |
 |  | `descricao` | TEXT | sim |
 |  | `visivel` | TINYINT(1) | não |
 |  | `campos_revisados` | JSON | sim |

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ p.nome }}{% endblock %}
+{% block conteudo %}
+<a class="small text-decoration-none" href="{{ url_for('vitrine.lista') }}"><i class="bi bi-arrow-left"></i> Perfumes</a>
+<div class="row g-4 mt-1">
+  <div class="col-md-5 col-lg-4">
+    <div class="card"><div class="card-body">
+      {% if p.imagem_url %}<img class="foto" src="{{ p.imagem_url }}" alt="Frasco de {{ p.nome }}">{% else %}<div class="foto-vazia"><i class="bi bi-droplet-half"></i></div>{% endif %}
+    </div></div>
+  </div>
+  <div class="col-md-7 col-lg-8">
+    <span class="chip mb-2">{{ p.marca|upper }}{% if p.pais %} · {{ p.pais|upper }}{% endif %}</span>
+    <h1 class="h2 mb-1">{{ p.nome }}</h1>
+    <p class="text-muted">{{ [p.genero|genero, p.ano, p.concentracao]|select|join(' · ') }}</p>
+    <div class="row g-3 mb-4">
+      {% for rotulo, valor in [('Avaliação', ('%.2f'|format(p.avaliacao)) if p.avaliacao else '—'), ('Fixação', p.fixacao or '—'), ('Projeção', p.projecao or '—'), ('Popularidade', p.popularidade or '—')] %}
+      <div class="col-6 col-lg-3"><div class="card"><div class="card-body py-2">
+        <div class="mono small text-muted text-uppercase">{{ rotulo }}</div><div class="fw-semibold">{{ valor }}</div>
+      </div></div></div>
+      {% endfor %}
+    </div>
+    <h2 class="h5">Pirâmide olfativa</h2>
+    <div class="row g-3 mb-4">
+      {% for nivel in ['SAIDA', 'CORPO', 'FUNDO'] %}
+      <div class="col-md-4"><div class="card h-100"><div class="card-body">
+        <div class="mono small text-muted text-uppercase mb-1">Notas de {{ nivel|nota_nivel|lower }}</div>
+        {% for n in p.notas[nivel] %}<span class="chip me-1 mb-1">{{ n }}</span>{% else %}<span class="small text-muted">—</span>{% endfor %}
+      </div></div></div>
+      {% endfor %}
+    </div>
+    {% if p.acordes %}
+    <h2 class="h5">Acordes principais</h2>
+    <div class="mb-4">{% for a in p.acordes %}<span class="chip me-1 mb-1">{{ a.nome }}{% if a.intensidade %} · {{ a.intensidade|lower }}{% endif %}</span>{% endfor %}</div>
+    {% endif %}
+    {% if usuario and usuario.perfil == 'CLIENTE' %}
+      <a class="btn mp-btn-grad" href="{{ url_for('consultor.pagina') }}"><i class="bi bi-cpu"></i> Perguntar ao consultor se combina comigo</a>
+    {% elif not usuario %}
+      <a class="btn mp-btn-grad" href="{{ url_for('auth.cadastro') }}">Criar conta e descobrir se combina com você</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

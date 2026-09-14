@@ -12,7 +12,7 @@ Projeto da disciplina **Experiência Criativa – Projetando Soluções Computac
 Pré-requisitos: Python 3.9+, Docker.
 
 ```bash
-# 1. banco MySQL com as tabelas e a carga inicial da 1ª Sprint
+# 1. banco MySQL com as tabelas e a carga inicial (scripts da 1ª e da 2ª Sprint)
 docker compose up -d db
 
 # 2. ambiente Python
@@ -27,7 +27,7 @@ flask --app app criar-admin admin@exemplo.com "Administrador"
 # 4. subir o site em http://127.0.0.1:5050
 flask --app app run --port 5050 --debug
 
-# testes automáticos (um por critério de aceite), com o banco do passo 1 no ar
+# testes automáticos (critérios de aceite, vitrine e consultor com a IA simulada), com o banco do passo 1 no ar
 pytest
 ```
 
@@ -38,6 +38,8 @@ pytest
 | US3 — questionário de perfil olfativo | `/questionario/` | `app/questionario.py` |
 | US4 — manter perguntas (admin) | `/admin/perguntas` | `app/admin.py` |
 | US5 — importar catálogo (admin) | `/admin/catalogo` | `app/admin.py` e `app/catalogo.py` |
+| Vitrine: melhores do ano, clássicos por década, lista e ficha (antecipado da Sprint 2) | `/perfumes/` | `app/vitrine.py` |
+| Consultor de IA com ferramentas no banco (antecipado da Sprint 2; exige `ANTHROPIC_API_KEY`) | `/consultor/` | `app/consultor.py` |
 
 No modo `CATALOGO_PROVEDOR=exemplo` (padrão), a importação usa perfumes fictícios das marcas *Casa Demo* e *Atelier Exemplo*. Para a API real, use `CATALOGO_PROVEDOR=fragella` e preencha `FRAGELLA_API_KEY` no `.env`.
 
@@ -65,7 +67,7 @@ No modo `CATALOGO_PROVEDOR=exemplo` (padrão), a importação usa perfumes fict�
 |---|---|---|
 | **Especificação (1ª Sprint)** — 14/09 | 1. Especificação no template (artefatos 1 a 6) | [`entregas/especificacao/Modular_Perfumes_Especificacao_do_Projeto.docx`](entregas/especificacao/) |
 | | 2. Imagem de alta resolução do Canvas PBB (PBIs da 1ª Sprint em vermelho) | [`entregas/pbb/Modular_Perfumes_Canvas_PBB_Sprint1.png`](entregas/pbb/Modular_Perfumes_Canvas_PBB_Sprint1.png) |
-| | 3. Script SQL do banco de dados | [`entregas/sql/modular_perfumes_sprint1.sql`](entregas/sql/modular_perfumes_sprint1.sql), com as consultas de verificação em [`consultas_sprint1.sql`](entregas/sql/consultas_sprint1.sql) |
+| | 3. Script SQL do banco de dados | [`entregas/sql/modular_perfumes_sprint1.sql`](entregas/sql/modular_perfumes_sprint1.sql), com as consultas de verificação em [`consultas_sprint1.sql`](entregas/sql/consultas_sprint1.sql). A 2ª Sprint acrescenta [`modular_perfumes_sprint2.sql`](entregas/sql/modular_perfumes_sprint2.sql). |
 | **Gestão de Projeto + Controle de Versão** — 14/09 | 1. Link público do Trello + print | Quadro: https://trello.com/b/6aa8142cf99507d054887fdb · guia dos cards: [`entregas/trello/cards.md`](entregas/trello/cards.md) |
 | | 2. Link público do GitHub + print de Insights → Contributors | Este repositório |
 | **1ª Sprint do Produto (Apresentação)** — 20/09 | PDF do PPT da apresentação | A fazer |

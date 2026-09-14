@@ -1,5 +1,5 @@
 # Banco MySQL para desenvolvimento local.
-# Na primeira subida, o MySQL roda o script da 1ª Sprint e cria as tabelas com a carga inicial.
+# Na primeira subida, o MySQL roda os scripts da 1ª e da 2ª Sprint e cria as tabelas com a carga inicial.
 services:
   db:
     image: mysql:8.4
@@ -14,6 +14,7 @@ services:
     volumes:
       - dados_mysql:/var/lib/mysql
       - ./entregas/sql/modular_perfumes_sprint1.sql:/docker-entrypoint-initdb.d/01_sprint1.sql:ro
+      - ./entregas/sql/modular_perfumes_sprint2.sql:/docker-entrypoint-initdb.d/02_sprint2.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_dev}"]
       interval: 5s

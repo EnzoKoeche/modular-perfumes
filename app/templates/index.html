@@ -1,47 +1,55 @@
 {% extends 'base.html' %}
 {% block titulo %}Consultor olfativo com IA{% endblock %}
 {% block conteudo %}
-<section class="mp-hero rounded-4 p-4 p-md-5 mb-4">
+<section class="mp-hero p-4 p-md-5 mb-5">
   <div class="row align-items-center g-4">
     <div class="col-lg-7">
-      <h1 class="display-5 fw-semibold">Descubra o perfume que combina com você.</h1>
-      <p class="lead mt-3">Responda um questionário rápido sobre o seu gosto e converse com um consultor olfativo de inteligência artificial. Ele explica cada indicação e leva você à loja certa para comprar.</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="chip chip-dark"><i class="bi bi-cpu"></i> CONSULTOR COM IA</span>
+        <span class="chip chip-dark"><i class="bi bi-ui-checks"></i> PERFIL OLFATIVO</span>
+      </div>
+      <h1 class="display-5 fw-semibold">Descubra o perfume que <span class="texto-grad">combina com você</span>.</h1>
+      <p class="lead mt-3">Responda um questionário rápido sobre o seu gosto e converse com um consultor olfativo de inteligência artificial. Ele explica cada indicação em linguagem simples.</p>
       <div class="d-flex flex-wrap gap-2 mt-4">
         {% if usuario %}
-          <a class="btn btn-lg mp-btn" href="{{ url_for('auth.login') }}">Ir para a minha área</a>
+          <a class="btn btn-lg mp-btn-grad" href="{{ url_for('auth.login') }}">Ir para a minha área</a>
         {% else %}
-          <a class="btn btn-lg mp-btn" href="{{ url_for('auth.cadastro') }}">Criar conta grátis</a>
-          <a class="btn btn-lg btn-outline-dark" href="{{ url_for('auth.login') }}">Já tenho conta</a>
+          <a class="btn btn-lg mp-btn-grad" href="{{ url_for('auth.cadastro') }}">Criar conta grátis</a>
+          <a class="btn btn-lg btn-outline-light" href="{{ url_for('vitrine.lista') }}">Ver perfumes</a>
         {% endif %}
       </div>
     </div>
     <div class="col-lg-5">
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <p class="text-uppercase small text-muted mb-2">Como funciona</p>
-          <ol class="mb-0 ps-3">
-            <li class="mb-2"><strong>Crie sua conta</strong> — é gratuito.</li>
-            <li class="mb-2"><strong>Responda o questionário</strong> de perfil olfativo.</li>
-            <li class="mb-2"><strong>Converse com o consultor de IA</strong> e receba recomendações explicadas.</li>
-            <li><strong>Guarde os favoritos na sacola</strong> e vá direto à loja de cada um.</li>
-          </ol>
-        </div>
+      <div class="p-4 rounded-4" style="background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12)">
+        <p class="mono small text-uppercase mb-3" style="color:#94a3b8">Como funciona</p>
+        {% for icone, titulo, texto in [('person-plus', 'Crie sua conta', 'Gratuita, com login e senha.'), ('ui-checks', 'Responda o questionário', 'Seu gosto vira um perfil olfativo.'), ('chat-dots', 'Converse com a IA', 'Recomendações explicadas para você.'), ('bag-heart', 'Vá direto à loja', 'Sem tentativa e erro.')] %}
+          <div class="d-flex gap-3 {% if not loop.last %}mb-3{% endif %}">
+            <span class="mono small" style="color:#a78bfa">0{{ loop.index }}</span>
+            <div><div class="fw-semibold">{{ titulo }}</div><div class="small" style="color:#94a3b8">{{ texto }}</div></div>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </section>
+
+{% if destaques %}
+<div class="d-flex justify-content-between align-items-end mb-3">
+  <div><span class="chip mb-2">CATÁLOGO</span><h2 class="h3 mb-0">Mais bem avaliados</h2></div>
+  <a class="small" href="{{ url_for('vitrine.lista') }}">Ver todos <i class="bi bi-arrow-right"></i></a>
+</div>
+<div class="row g-3 mb-5">
+  {% for p in destaques %}<div class="col-6 col-lg-3">{% include '_perfume_card.html' %}</div>{% endfor %}
+</div>
+{% endif %}
+
 <div class="row g-3">
-  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
-    <h2 class="h5"><i class="bi bi-ui-checks"></i> Perfil olfativo</h2>
-    <p class="mb-0 text-muted">Suas respostas viram afinidades com famílias como floral, amadeirado e cítrico.</p>
+  {% for icone, titulo, texto in [('ui-checks', 'Perfil olfativo', 'Suas respostas viram afinidades com famílias como floral, amadeirado e cítrico.'), ('cpu', 'Consultor de IA', 'Busca no catálogo, cruza com o seu perfil e justifica cada recomendação.'), ('bag-heart', 'Lojas parceiras', 'O site não vende: leva você à página da loja de cada perfume.')] %}
+  <div class="col-md-4"><div class="card h-100"><div class="card-body p-4">
+    <div class="mb-3" style="width:2.5rem;height:2.5rem;border-radius:10px;background:var(--mp-grad);display:flex;align-items:center;justify-content:center;color:#fff"><i class="bi bi-{{ icone }}"></i></div>
+    <h3 class="h6">{{ titulo }}</h3>
+    <p class="mb-0 small text-muted">{{ texto }}</p>
   </div></div></div>
-  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
-    <h2 class="h5"><i class="bi bi-chat-heart"></i> Consultor de IA</h2>
-    <p class="mb-0 text-muted">Conversa em linguagem simples e justifica cada recomendação. <span class="badge text-bg-secondary">Sprint 2</span></p>
-  </div></div></div>
-  <div class="col-md-4"><div class="card h-100 border-0 shadow-sm"><div class="card-body">
-    <h2 class="h5"><i class="bi bi-bag-heart"></i> Lojas parceiras</h2>
-    <p class="mb-0 text-muted">O site não vende: leva você à página da loja de cada perfume escolhido. <span class="badge text-bg-secondary">Sprint 3</span></p>
-  </div></div></div>
+  {% endfor %}
 </div>
 {% endblock %}
