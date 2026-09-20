@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1 · Subir o banco (Docker)",
+      "type": "shell",
+      "command": "open -a Docker; docker compose up -d db && docker compose ps",
+      "problemMatcher": []
+    },
+    {
+      "label": "2 · Subir o site (:5050)",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/flask --app app run --port 5050 --debug",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "3 · Abrir o banco no navegador (Adminer :8080)",
+      "type": "shell",
+      "command": "docker start modular-adminer 2>/dev/null || docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer; sleep 2; open http://127.0.0.1:8080",
+      "problemMatcher": []
+    },
+    {
+      "label": "Testes (pytest)",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python -m pytest -q",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "APRESENTAÇÃO · subir tudo",
+      "dependsOrder": "sequence",
+      "dependsOn": ["1 · Subir o banco (Docker)", "3 · Abrir o banco no navegador (Adminer :8080)", "2 · Subir o site (:5050)"],
+      "problemMatcher": []
+    }
+  ]
+}

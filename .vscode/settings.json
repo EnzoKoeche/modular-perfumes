@@ -1,0 +1,34 @@
+{
+  // Interpretador: o .venv do próprio projeto (não o Python do sistema)
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+
+  // Testes: pytest contra o MySQL do Docker
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests"],
+
+  // Templates do Flask são Jinja, não HTML puro
+  "files.associations": { "**/app/templates/**/*.html": "jinja-html" },
+  "emmet.includeLanguages": { "jinja-html": "html" },
+
+  "editor.rulers": [120],
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": { "**/__pycache__": true, "**/.pytest_cache": true, "**/.DS_Store": true },
+
+  // Banco: conexão pronta do SQLTools (ícone de cilindro na barra lateral)
+  "sqltools.connections": [
+    {
+      "name": "Modular Perfumes (Docker)",
+      "driver": "MySQL",
+      "server": "127.0.0.1",
+      "port": 3307,
+      "database": "modular_perfumes",
+      "username": "modular",
+      "password": "modular_dev",
+      "askForPassword": false,
+      "mysqlOptions": { "authProtocol": "default" }
+    }
+  ],
+  "sqltools.useNodeRuntime": true
+}

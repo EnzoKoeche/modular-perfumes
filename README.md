@@ -9,6 +9,8 @@ Projeto da disciplina **Experiência Criativa – Projetando Soluções Computac
 
 ## Rodar o site localmente (1ª Sprint)
 
+> Preparando uma máquina do zero (outro integrante, outro computador)? O passo a passo completo — programas a instalar, banco, `.env`, administrador e testes — está em [CLAUDE.md](CLAUDE.md).
+
 Pré-requisitos: Python 3.9+, Docker.
 
 ```bash

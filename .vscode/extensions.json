@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "samuelcolvin.jinjahtml",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-mysql",
+    "ms-azuretools.vscode-docker"
+  ]
+}
