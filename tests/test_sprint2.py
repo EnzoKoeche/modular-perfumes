@@ -98,7 +98,8 @@ def test_consultor_responde_registra_recomendacao_e_tokens(admin, app, banco, mo
     assert resp.status_code == 200 and dados['texto'] == 'Separei um cítrico.'
     assert dados['recomendacoes'][0]['nome'] == 'Brisa de Bergamota'
     kwargs = chamadas[0]
-    assert kwargs['model'] == 'claude-opus-5' and kwargs['fallbacks'] == 'default'
+    # o modelo vem da configuração (IA_MODELO no .env), então o teste não depende de qual é
+    assert kwargs['model'] == app.config['IA_MODELO'] and kwargs['fallbacks'] == 'default'
     assert kwargs['messages'][-1] == {'role': 'user', 'content': 'Quero algo fresco para o trabalho'}
     assert kwargs['system'][0]['cache_control'] == {'type': 'ephemeral'}
     ia = banco("SELECT tokens_entrada, tokens_saida, tokens_cache FROM mensagem WHERE papel = 'ASSISTENTE'")[0]

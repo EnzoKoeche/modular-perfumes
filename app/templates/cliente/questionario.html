@@ -44,5 +44,15 @@
   // US3 CA2/CA3: rola até a primeira pergunta pendente ou até onde o cliente parou
   const alvo = document.querySelector('.pergunta-pendente') || document.querySelector('.pergunta-continuar');
   if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // destaca a div da alternativa marcada (radio e checkbox)
+  function marcarEscolhidas() {
+    document.querySelectorAll('.form-check').forEach(div => {
+      div.classList.toggle('escolhida', div.querySelector('input').checked);
+    });
+  }
+  document.querySelectorAll('.form-check input')
+          .forEach(i => i.addEventListener('change', marcarEscolhidas));
+  marcarEscolhidas();
 </script>
 {% endblock %}
