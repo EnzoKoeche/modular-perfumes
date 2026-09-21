@@ -45,10 +45,14 @@
   const alvo = document.querySelector('.pergunta-pendente') || document.querySelector('.pergunta-continuar');
   if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // destaca a div da alternativa marcada (radio e checkbox)
+  // contorna a div da alternativa marcada (radio e checkbox)
+  // e apaga (fade) a pergunta que já foi respondida
   function marcarEscolhidas() {
     document.querySelectorAll('.form-check').forEach(div => {
       div.classList.toggle('escolhida', div.querySelector('input').checked);
+    });
+    document.querySelectorAll('fieldset[id^="pergunta-"]').forEach(fs => {
+      fs.classList.toggle('pergunta-respondida', !!fs.querySelector('input:checked'));
     });
   }
   document.querySelectorAll('.form-check input')
