@@ -8,7 +8,7 @@
     {% set respondidas = perguntas|selectattr('id', 'in', salvas.keys()|list)|list|length %}
     <div class="d-flex justify-content-between small text-muted mb-1"><span class="mono">PROGRESSO</span><span>{{ respondidas }} de {{ perguntas|length }}</span></div>
     <div class="progress mb-4" role="progressbar" aria-label="Progresso" aria-valuenow="{{ respondidas }}" aria-valuemin="0" aria-valuemax="{{ perguntas|length }}">
-      <div class="progress-bar" style="width: {{ (100 * respondidas / (perguntas|length or 1))|round }}%; background: var(--mp-dourado)">{{ respondidas }} de {{ perguntas|length }}</div>
+      <div class="progress-bar" style="width: {{ (100 * respondidas / (perguntas|length or 1))|round }}%; background: var(--mp-grad)">{{ respondidas }} de {{ perguntas|length }}</div>
     </div>
     <form method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -18,7 +18,7 @@
           <div class="card-body">
             <legend class="h6">{{ loop.index }}. {{ p.enunciado }}{% if p.obrigatoria %} <span class="text-danger">*</span>{% endif %}
               <small class="text-muted fw-normal">({{ 'marque uma' if p.tipo == 'UNICA' else 'marque uma ou mais' }})</small></legend>
-            {% if classe == 'pergunta-continuar' %}<p class="small mb-2" style="color: var(--mp-dourado)"><i class="bi bi-arrow-right-circle"></i> Continue daqui</p>{% endif %}
+            {% if classe == 'pergunta-continuar' %}<p class="small mb-2" style="color: var(--mp-a1)"><i class="bi bi-arrow-right-circle"></i> Continue daqui</p>{% endif %}
             {% if p.id in pendentes %}<p class="small text-danger mb-2">Responda esta pergunta para concluir.</p>{% endif %}
             {% for a in p.alternativas %}
               <div class="form-check">
