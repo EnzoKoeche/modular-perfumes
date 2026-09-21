@@ -1,29 +1,39 @@
 {
   "version": "2.0.0",
+  // As tarefas usam blocos "osx" / "linux" / "windows" porque cada sistema abre
+  // aplicativos e navegador de um jeito, e o venv fica em pastas diferentes.
   "tasks": [
     {
       "label": "1 · Subir o banco (Docker)",
       "type": "shell",
-      "command": "open -a Docker; docker compose up -d db && docker compose ps",
+      "command": "docker compose up -d db && docker compose ps",
+      "osx": { "command": "open -a Docker >/dev/null 2>&1; docker compose up -d db && docker compose ps" },
+      "linux": { "command": "docker compose up -d db && docker compose ps" },
+      "windows": { "command": "docker compose up -d db; docker compose ps" },
       "problemMatcher": []
     },
     {
       "label": "2 · Subir o site (:5050)",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/flask --app app run --port 5050 --debug",
+      "windows": { "command": "${workspaceFolder}\\.venv\\Scripts\\flask.exe --app app run --port 5050 --debug" },
       "isBackground": true,
       "problemMatcher": []
     },
     {
       "label": "3 · Abrir o banco no navegador (Adminer :8080)",
       "type": "shell",
-      "command": "docker start modular-adminer 2>/dev/null || docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer; sleep 2; open http://127.0.0.1:8080",
+      "command": "docker start modular-adminer || docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer",
+      "osx": { "command": "(docker start modular-adminer || docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer) && sleep 2 && open http://127.0.0.1:8080" },
+      "linux": { "command": "(docker start modular-adminer || docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer) && sleep 2 && xdg-open http://127.0.0.1:8080" },
+      "windows": { "command": "docker start modular-adminer; if ($LASTEXITCODE -ne 0) { docker run -d --name modular-adminer --network modular-perfumes_default -e ADMINER_DEFAULT_SERVER=db -e ADMINER_DESIGN=dracula -p 8080:8080 adminer }; Start-Sleep 2; Start-Process http://127.0.0.1:8080" },
       "problemMatcher": []
     },
     {
       "label": "Testes (pytest)",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python -m pytest -q",
+      "windows": { "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe -m pytest -q" },
       "group": { "kind": "test", "isDefault": true },
       "problemMatcher": []
     },

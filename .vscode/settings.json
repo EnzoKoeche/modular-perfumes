@@ -1,5 +1,7 @@
 {
-  // Interpretador: o .venv do próprio projeto (não o Python do sistema)
+  // Interpretador: o .venv do próprio projeto (não o Python do sistema).
+  // No Windows o caminho é .venv\\Scripts\\python.exe — se este não existir, a extensão
+  // Python detecta o .venv sozinha; basta confirmar em "Python: Select Interpreter".
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvironment": true,
 
