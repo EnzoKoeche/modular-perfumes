@@ -33,6 +33,10 @@
     <div class="mb-4">{% for a in p.acordes %}<span class="chip me-1 mb-1">{{ a.nome }}{% if a.intensidade %} · {{ a.intensidade|lower }}{% endif %}</span>{% endfor %}</div>
     {% endif %}
     {% if usuario and usuario.perfil == 'CLIENTE' %}
+      <form class="d-inline" method="post" action="{{ url_for('sacola.adicionar', perfume_id=p.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn mp-btn"><i class="bi bi-bag-plus"></i> Adicionar à sacola</button>
+      </form>
       <a class="btn mp-btn-grad" href="{{ url_for('consultor.pagina') }}"><i class="bi bi-cpu"></i> Perguntar ao consultor se combina comigo</a>
     {% elif not usuario %}
       <a class="btn mp-btn-grad" href="{{ url_for('auth.cadastro') }}">Criar conta e descobrir se combina com você</a>
