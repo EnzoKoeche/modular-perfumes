@@ -117,6 +117,80 @@ Padrão pedido na disciplina: **COMO** (persona do PBB) · **POSSO** (PBI) · **
 
 ---
 
+## User stories da Sprint 2
+
+**Objetivo da Sprint 2:** o cliente consulta a ficha do perfume, conversa com o agente consultor, recebe recomendações e monta a sacola; o administrador ajusta os pesos das alternativas.
+
+| US | Responsável | Situação em 30/10 |
+|---|---|---|
+| US6 | André Lagos | a fazer: tela de pesos no painel do administrador |
+| US7 | Enzo (ficha) · Angelo Cesar (botão da sacola na ficha) | ficha pronta; botão a fazer |
+| US8 | Enzo | pronta |
+| US9 | Enzo (agente) · Angelo Cesar (botão da sacola no cartão) | agente pronto; botão a fazer |
+| US10 | Enzo | pronta (rotas, tela e testes) |
+
+### US6 — PBI: Manter as alternativas e os pesos
+
+**COMO** Administrador, **POSSO** definir o peso de cada alternativa do questionário para cada família olfativa, **PARA** ter um perfil olfativo calculado com regras que eu mesmo ajusto.
+
+*Feature:* Questionário de Perfil
+
+| # | Tipo | Dado que | Quando | Então |
+|---|---|---|---|---|
+| CA1 | fluxo principal | estou na gestão do questionário e abro "Pesos" de uma pergunta | informo um peso inteiro de 0 a 10 para cada família em cada alternativa e aciono "Salvar pesos" | o sistema grava os pesos e exibe "Pesos atualizados". |
+| CA2 | exceção | estou editando os pesos | informo um peso negativo, maior que 10 ou que não é número e aciono "Salvar pesos" | o sistema não grava nada e exibe "Use pesos inteiros de 0 a 10". |
+| CA3 | fluxo alternativo | deixo todos os pesos de uma alternativa em 0 | aciono "Salvar pesos" | o sistema grava e avisa que essa alternativa não soma afinidade com nenhuma família. |
+
+### US7 — PBI: Consultar a ficha do perfume
+
+**COMO** Cliente, **POSSO** consultar a ficha completa de um perfume, **PARA** conhecer a pirâmide olfativa e os acordes antes de decidir.
+
+*Feature:* Consultor Olfativo por IA
+
+| # | Tipo | Dado que | Quando | Então |
+|---|---|---|---|---|
+| CA1 | fluxo principal | o perfume está visível no catálogo | abro a ficha pela vitrine ou por uma recomendação | o sistema exibe foto, nome, marca, gênero, ano, notas de saída, corpo e fundo e os acordes, com o botão "Adicionar à sacola". |
+| CA2 | exceção | o perfume não existe ou está oculto | acesso o endereço da ficha | o sistema exibe "Perfume não encontrado." com o código 404. |
+| CA3 | fluxo alternativo | não estou logado | abro a ficha | o sistema exibe a ficha e troca o botão da sacola por "Criar conta e descobrir se combina com você". |
+
+### US8 — PBI: Conversar com o agente consultor
+
+**COMO** Cliente, **POSSO** conversar com o agente consultor de IA, **PARA** tirar dúvidas sobre perfumes em linguagem natural, levando em conta o meu perfil.
+
+*Feature:* Consultor Olfativo por IA
+
+| # | Tipo | Dado que | Quando | Então |
+|---|---|---|---|---|
+| CA1 | fluxo principal | concluí o questionário de perfil | envio uma mensagem ao consultor | o sistema mostra a resposta do agente e guarda a conversa no histórico. |
+| CA2 | exceção | a chave da IA não está configurada ou o serviço está fora do ar | envio uma mensagem | o sistema avisa que o consultor está indisponível, sem perder o histórico. |
+| CA3 | exceção | já enviei 30 mensagens hoje (RN-15) | envio mais uma | o sistema não chama a IA e exibe a mensagem de limite diário. |
+
+### US9 — PBI: Receber as recomendações personalizadas
+
+**COMO** Cliente, **POSSO** receber recomendações de perfumes do catálogo com a justificativa de cada uma, **PARA** saber quais perfumes combinam com o meu perfil e por quê.
+
+*Feature:* Consultor Olfativo por IA
+
+| # | Tipo | Dado que | Quando | Então |
+|---|---|---|---|---|
+| CA1 | fluxo principal | o agente recomenda um perfume na conversa | a resposta chega | o sistema registra a recomendação com posição e justificativa e exibe o cartão com foto, "ver ficha" e "Adicionar à sacola". |
+| CA2 | exceção | o agente tenta recomendar um perfume que não existe ou está oculto | a ferramenta de registro é chamada | o sistema recusa o registro e o cartão não aparece. |
+| CA3 | fluxo alternativo | ainda não concluí o questionário | abro o consultor | o sistema me leva ao questionário (RN-04). |
+
+### US10 — PBI: Adicionar e remover perfumes da sacola
+
+**COMO** Cliente, **POSSO** adicionar, listar e remover perfumes da minha sacola, **PARA** juntar os perfumes que quero comprar nas lojas parceiras.
+
+*Feature:* Sacola e Compra nas Lojas
+
+| # | Tipo | Dado que | Quando | Então |
+|---|---|---|---|---|
+| CA1 | fluxo principal | concluí o questionário e o perfume está visível | aciono "Adicionar à sacola" | o perfume entra na sacola, que lista nome, marca e foto, com a mensagem "<perfume> entrou na sacola." |
+| CA2 | exceção | o perfume já está na sacola | aciono "Adicionar à sacola" de novo | o sistema não duplica e exibe "Este perfume já está na sua sacola." |
+| CA3 | fluxo alternativo | tenho um perfume na sacola | aciono "Remover" | o perfume sai da sacola e o sistema exibe "Perfume removido da sacola." |
+
+---
+
 ## Definition of Done (proposta)
 
 - Os critérios de aceite da história passam em teste manual e, quando houver regra de negócio, em teste automatizado.
