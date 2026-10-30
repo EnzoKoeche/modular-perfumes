@@ -124,10 +124,10 @@ Padrão pedido na disciplina: **COMO** (persona do PBB) · **POSSO** (PBI) · **
 | US | Responsável | Situação em 30/10 |
 |---|---|---|
 | US6 | André Lagos | a fazer: tela de pesos no painel do administrador |
-| US7 | Enzo (ficha) · Angelo Cesar (botão da sacola na ficha) | ficha pronta; botão a fazer |
+| US7 | Enzo | pronta |
 | US8 | Enzo | pronta |
-| US9 | Enzo (agente) · Angelo Cesar (botão da sacola no cartão) | agente pronto; botão a fazer |
-| US10 | Enzo | pronta (rotas, tela e testes) |
+| US9 | Enzo | pronta |
+| US10 | Enzo | pronta (rotas, tela, botões na ficha e no cartão de recomendação, testes) |
 
 ### US6 — PBI: Manter as alternativas e os pesos
 

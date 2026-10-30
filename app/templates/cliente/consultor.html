@@ -54,18 +54,20 @@
   }
 
   function cartao(r) {
-    const a = document.createElement('a');
-    a.className = 'card card-hover text-decoration-none text-reset';
-    a.href = '/perfumes/' + r.perfume_id;
+    const div = document.createElement('div');
+    div.className = 'card card-hover';
     const foto = r.imagem_url
       ? `<img data-foto class="frasco" src="${encodeURI(r.imagem_url)}" alt="">`
       : '<div class="frasco foto-vazia"><i class="bi bi-droplet-half"></i></div>';
-    a.innerHTML = `<div class="card-body d-flex gap-3">${foto}<div><div class="fw-semibold"></div>
-      <div class="small text-muted marca"></div><div class="small mt-1 just"></div></div></div>`;
-    a.querySelector('.fw-semibold').textContent = r.nome;
-    a.querySelector('.marca').textContent = r.marca + (r.ano ? ' · ' + r.ano : '');
-    a.querySelector('.just').textContent = r.justificativa;
-    return a;
+    div.innerHTML = `<a class="card-body d-flex gap-3 text-decoration-none text-reset" href="/perfumes/${r.perfume_id}">${foto}
+      <div><div class="fw-semibold"></div><div class="small text-muted marca"></div><div class="small mt-1 just"></div></div></a>
+      <form class="px-3 pb-3" method="post" action="/sacola/adicionar/${r.perfume_id}">
+        <input type="hidden" name="csrf_token" value="${csrf}">
+        <button class="btn btn-sm mp-btn"><i class="bi bi-bag-plus"></i> Adicionar à sacola</button></form>`;
+    div.querySelector('.fw-semibold').textContent = r.nome;
+    div.querySelector('.marca').textContent = r.marca + (r.ano ? ' · ' + r.ano : '');
+    div.querySelector('.just').textContent = r.justificativa;
+    return div;
   }
 
   document.getElementById('form-chat').addEventListener('submit', async (e) => {

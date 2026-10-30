@@ -50,3 +50,17 @@ def test_oculto_nao_entra_e_fica_indisponivel_na_sacola(admin, app, banco):
 def test_sacola_bloqueada_sem_questionario(client):
     cadastrar(client)
     assert '/questionario' in client.get('/sacola/').headers['Location']             # RN-04
+
+
+def test_botao_da_sacola_na_ficha_e_no_cartao_de_recomendacao(admin, app, banco):
+    importar_exemplo(admin)
+    c = cliente_com_perfil(app)
+    pid = perfume_id(banco)
+    assert f'/sacola/adicionar/{pid}' in c.get(f'/perfumes/{pid}').get_data(as_text=True)          # US7 CA1
+    assert '/sacola/adicionar/' not in app.test_client().get(f'/perfumes/{pid}').get_data(as_text=True)  # US7 CA3
+    uid = banco("SELECT id FROM usuario WHERE email = 'cliente@teste.com'")[0]['id']
+    banco('INSERT INTO conversa (usuario_id) VALUES (%s)', (uid,))
+    cid = banco('SELECT MAX(id) AS id FROM conversa')[0]['id']
+    banco("INSERT INTO recomendacao (conversa_id, perfume_id, posicao, justificativa) VALUES (%s, %s, 1, 'teste')",
+          (cid, pid))
+    assert f'/sacola/adicionar/{pid}' in c.get('/consultor/').get_data(as_text=True)               # US9 CA1
