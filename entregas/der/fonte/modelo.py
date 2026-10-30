@@ -279,8 +279,8 @@ SPRINT1 = [
     'importacao_catalogo',
 ]
 
-# Tabelas que entram na 2ª Sprint (consultor de IA), criadas por um script próprio
-SPRINT2 = ['conversa', 'mensagem', 'recomendacao']
+# Tabelas que entram na 2ª Sprint (consultor de IA e sacola), criadas por um script próprio
+SPRINT2 = ['conversa', 'mensagem', 'recomendacao', 'sacola_item']
 
 # coluna FK -> tabela referenciada
 FK_REF = {

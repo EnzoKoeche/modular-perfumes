@@ -47,12 +47,14 @@ def create_app(config=None):
     from .admin import bp as admin_bp
     from .consultor import bp as consultor_bp
     from .vitrine import bp as vitrine_bp
+    from .sacola import bp as sacola_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(questionario_bp)
     app.register_blueprint(cliente_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(consultor_bp)
     app.register_blueprint(vitrine_bp)
+    app.register_blueprint(sacola_bp)
 
     @app.template_filter('genero')
     def genero_legivel(valor):

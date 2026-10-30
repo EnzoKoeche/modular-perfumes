@@ -14,7 +14,7 @@ DEFAULTS = {
     'perfil': "'CLIENTE'", 'origem': "'MANUAL'", 'status': "'EM_ANDAMENTO'",
 }
 AGORA = {'criado_em', 'importado_em', 'iniciada_em', 'respondida_em', 'gerado_em', 'aceite_termos_em',
-         'enviada_em', 'gerada_em', 'ultima_mensagem_em'}
+         'enviada_em', 'gerada_em', 'ultima_mensagem_em', 'adicionado_em'}
 AGORA_ATUALIZA = {'atualizado_em', 'atualizada_em'}
 CHECKS = {
     'alternativa_peso': ['CHECK (peso >= 0)'],
@@ -95,7 +95,7 @@ def create_table(t):
 if len(sys.argv) > 2 and sys.argv[2] == 'sprint2':
     ordem = ordem_dependencias(SPRINT2, ja_existentes=SPRINT1)
     out = ['''-- =====================================================================
--- MODULAR PERFUMES — Script SQL da 2ª Sprint (consultor de IA)
+-- MODULAR PERFUMES — Script SQL da 2ª Sprint (consultor de IA e sacola)
 -- Rodar DEPOIS de modular_perfumes_sprint1.sql. Gerado de entregas/der/fonte/modelo.py.
 -- =====================================================================
 

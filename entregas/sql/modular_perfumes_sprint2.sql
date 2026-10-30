@@ -1,11 +1,12 @@
 -- =====================================================================
--- MODULAR PERFUMES — Script SQL da 2ª Sprint (consultor de IA)
+-- MODULAR PERFUMES — Script SQL da 2ª Sprint (consultor de IA e sacola)
 -- Rodar DEPOIS de modular_perfumes_sprint1.sql. Gerado de entregas/der/fonte/modelo.py.
 -- =====================================================================
 
 SET NAMES utf8mb4;
 USE modular_perfumes;
 
+DROP TABLE IF EXISTS sacola_item;
 DROP TABLE IF EXISTS recomendacao;
 DROP TABLE IF EXISTS mensagem;
 DROP TABLE IF EXISTS conversa;
@@ -43,4 +44,13 @@ CREATE TABLE recomendacao (
   PRIMARY KEY (id),
   CONSTRAINT fk_recomendacao_conversa_id FOREIGN KEY (conversa_id) REFERENCES conversa (id) ON DELETE CASCADE,
   CONSTRAINT fk_recomendacao_perfume_id FOREIGN KEY (perfume_id) REFERENCES perfume (id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE sacola_item (
+  usuario_id INT NOT NULL,
+  perfume_id INT NOT NULL,
+  adicionado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, perfume_id),
+  CONSTRAINT fk_sacola_item_usuario_id FOREIGN KEY (usuario_id) REFERENCES usuario (id) ON DELETE CASCADE,
+  CONSTRAINT fk_sacola_item_perfume_id FOREIGN KEY (perfume_id) REFERENCES perfume (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
