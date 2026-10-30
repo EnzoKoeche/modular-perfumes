@@ -22,6 +22,7 @@
         <td>{% if p.ativa %}<span class="badge text-bg-success">Ativa</span>{% else %}<span class="badge text-bg-secondary">Desativada</span>{% endif %}</td>
         <td class="text-end text-nowrap">
           <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.editar_pergunta', pergunta_id=p.id) }}">Alterar</a>
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.pesos', pergunta_id=p.id) }}">Pesos</a>
           {% if p.ativa %}
           <form method="post" action="{{ url_for('admin.excluir_pergunta', pergunta_id=p.id) }}" class="d-inline" onsubmit="return confirm('Excluir esta pergunta?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
