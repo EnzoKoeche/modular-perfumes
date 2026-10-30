@@ -1,4 +1,4 @@
-"""Área do administrador: US4 (manter perguntas do questionário) e US5 (importar o catálogo)."""
+"""Área do administrador: US4 (manter perguntas do questionário), US5 (importar o catálogo) e US6 (pesos)."""
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 
 from . import catalogo, db
@@ -141,6 +141,47 @@ def reativar_pergunta(pergunta_id):
     db.confirmar()
     flash('Pergunta reativada.', 'success')
     return redirect(url_for('admin.perguntas'))
+
+
+# ---------------------------------------------------------------- US6: pesos das alternativas
+
+MSG_PESO_INVALIDO = 'Use pesos inteiros de 0 a 10'
+
+
+@bp.route('/perguntas/<int:pergunta_id>/pesos', methods=['GET', 'POST'])
+@perfil_obrigatorio('ADMIN')
+def pesos(pergunta_id):
+    pergunta = db.consultar_um('SELECT * FROM pergunta WHERE id = %s', (pergunta_id,))
+    if not pergunta:
+        return render_template('erro.html', codigo=404, mensagem='Pergunta não encontrada.'), 404
+    alternativas = db.consultar('SELECT id, texto FROM alternativa WHERE pergunta_id = %s AND ativa = 1 '
+                                'ORDER BY ordem, id', (pergunta_id,))
+    familias = db.consultar('SELECT id, nome FROM familia_olfativa ORDER BY id')
+    atuais = db.consultar('SELECT ap.alternativa_id, ap.familia_id, ap.peso FROM alternativa_peso ap '
+                          'JOIN alternativa a ON a.id = ap.alternativa_id WHERE a.pergunta_id = %s', (pergunta_id,))
+    valores = {f'peso_{p["alternativa_id"]}_{p["familia_id"]}': str(int(p['peso'])) for p in atuais}
+    if request.method == 'POST':
+        valores = {f'peso_{a["id"]}_{f["id"]}': request.form.get(f'peso_{a["id"]}_{f["id"]}', '').strip() or '0'
+                   for a in alternativas for f in familias}           # campo vazio conta como 0
+        if not all(v.isascii() and v.isdigit() and int(v) <= 10 for v in valores.values()):
+            flash(MSG_PESO_INVALIDO, 'danger')                            # US6 CA2: não grava nada
+            return render_template('admin/pesos.html', pergunta=pergunta, alternativas=alternativas,
+                                   familias=familias, valores=valores), 400
+        for a in alternativas:
+            db.executar('DELETE FROM alternativa_peso WHERE alternativa_id = %s', (a['id'],))
+            for f in familias:
+                peso = int(valores[f'peso_{a["id"]}_{f["id"]}'])
+                if peso > 0:
+                    db.executar('INSERT INTO alternativa_peso (alternativa_id, familia_id, peso) VALUES (%s, %s, %s)',
+                                (a['id'], f['id'], peso))
+        db.confirmar()
+        flash('Pesos atualizados', 'success')                                 # US6 CA1
+        for a in alternativas:
+            if all(valores[f'peso_{a["id"]}_{f["id"]}'] == '0' for f in familias):    # US6 CA3
+                flash(f'A alternativa "{a["texto"]}" não soma afinidade com nenhuma família.', 'warning')
+        return redirect(url_for('admin.pesos', pergunta_id=pergunta_id))
+    return render_template('admin/pesos.html', pergunta=pergunta, alternativas=alternativas,
+                           familias=familias, valores=valores)
 
 
 # ---------------------------------------------------------------- US5: importação do catálogo

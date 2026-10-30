@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block titulo %}Pesos da pergunta{% endblock %}
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="card border-0 shadow-sm"><div class="card-body p-4">
+      <h1 class="h4 mb-1">Pesos das alternativas</h1>
+      <p class="text-muted mb-3">{{ pergunta.enunciado }}</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="table-responsive mb-3">
+          <table class="table align-middle mb-0">
+            <thead><tr><th>Alternativa</th>{% for f in familias %}<th class="text-center small">{{ f.nome }}</th>{% endfor %}</tr></thead>
+            <tbody>
+            {% for a in alternativas %}
+              <tr>
+                <td>{{ a.texto }}</td>
+                {% for f in familias %}
+                {% set campo = 'peso_' ~ a.id ~ '_' ~ f.id %}
+                <td><input name="{{ campo }}" type="number" min="0" max="10" step="1" class="form-control form-control-sm text-center"
+                           value="{{ valores.get(campo, '0') }}" aria-label="Peso de {{ a.texto }} em {{ f.nome }}"></td>
+                {% endfor %}
+              </tr>
+            {% else %}
+              <tr><td colspan="{{ familias|length + 1 }}" class="text-center text-muted py-4">Esta pergunta não tem alternativas ativas.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="small text-muted">Peso inteiro de 0 a 10: quanto essa alternativa soma de afinidade com cada família olfativa.</p>
+        <div class="d-flex gap-2 justify-content-end">
+          <a class="btn btn-outline-secondary" href="{{ url_for('admin.perguntas') }}">Voltar</a>
+          <button class="btn mp-btn">Salvar pesos</button>
+        </div>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
