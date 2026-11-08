@@ -241,7 +241,7 @@ add(f'''<div class="capa">
   <div class="chips"><span class="chip">EXPERIÊNCIA CRIATIVA · PUCPR</span><span class="chip">{SPRINT}</span><span class="chip">RESULTADOS PARA A BANCA</span></div>
   <h1>Modular <span class="grad">Perfumes</span></h1>
   <p class="sub">Consultor olfativo com inteligência artificial: do questionário à sacola</p>
-  <div class="equipe"><div><span class="mono">EQUIPE</span><p>Enzo Koeche Castagna · Angelo · André Lagos</p></div>
+  <div class="equipe"><div><span class="mono">EQUIPE</span><p>Enzo Koeche Castagna · André Lagos</p></div>
   <div><span class="mono">ORIENTADORES</span><p>Profa. Cristina Verçosa P. B. de Souza · Prof. Giulio Domenico Bordin · Profa. Rosilene Fernandes</p></div></div>
 </div>''', escuro=True)
 

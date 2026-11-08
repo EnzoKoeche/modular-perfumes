@@ -136,6 +136,7 @@ def achar_contem(trecho):
 
 # ---------------------------------------------------------------- capa: identificar a versão
 trocar_texto(achar('ESPECIFICAÇÃO DO PROJETO'), 'ESPECIFICAÇÃO DO PROJETO — 2ª SPRINT')
+corpo.remove(achar('ANGELO'))   # saiu do grupo antes da 2ª Sprint
 
 # ---------------------------------------------------------------- Artefato 4: Canvas PBB da Sprint 2
 # o quadro do Artefato 3 enche a página; os parágrafos vazios antes da quebra geravam uma página em branco
@@ -153,6 +154,8 @@ from docx.oxml import OxmlElement
 ppr.insert(0, OxmlElement('w:pageBreakBefore'))
 while True:   # sobra de parágrafo vazio entre a legenda do Artefato 3 e o título do Artefato 4
     antes = titulo4.getprevious()
+    while antes.tag in (qn('w:bookmarkStart'), qn('w:bookmarkEnd')):   # o marcador do sumário não conta
+        antes = antes.getprevious()
     if antes.tag == qn('w:p') and not ''.join(t.text or '' for t in antes.iter(qn('w:t'))).strip() \
             and not list(antes.iter(qn('w:drawing'))) and not list(antes.iter(qn('w:pict'))):
         corpo.remove(antes)
@@ -171,6 +174,9 @@ linhas = us1.findall(qn('w:tr'))
 for p in linhas[1].findall(qn('w:tc'))[0].findall(qn('w:p')):
     if ''.join(x.text or '' for x in p.iter(qn('w:t'))).startswith('POSSO'):
         trocar_texto(p, 'POSSO: realizar o cadastro na plataforma, informando nome, data de nascimento, e-mail e senha.')
+ca1 = linhas[2].findall(qn('w:tc'))[1].findall(qn('w:p'))
+trocar_texto(ca1[1], 'QUANDO: informo nome, data de nascimento, e-mail válido, senha com no mínimo 8 caracteres e a '
+                     'confirmação da senha e aciono "Criar conta"')
 ca3 = linhas[4].findall(qn('w:tc'))[1].findall(qn('w:p'))
 trocar_texto(ca3[1], 'QUANDO: deixo um campo obrigatório vazio, informo senha com menos de 8 caracteres, senhas que não '
                      'conferem ou data de nascimento no futuro e aciono "Criar conta"')
@@ -191,6 +197,10 @@ trocar_legenda(achar_contem('– Relação de User Stories'),
 trello = achar('LINK DO TRELLO')
 ts = list(trello.iter(qn('w:t')))
 ts[-1].text = ' — quadro com as listas Product Backlog, Sprint 1 Backlog, Sprint 2 Backlog, Em Desenvolvimento, Em Teste e Concluído.'
+TRELLO_URL = 'https://trello.com/b/PN46fipf'   # o mesmo link público da apresentação
+for link in trello.iter(qn('w:hyperlink')):
+    doc.part.rels[link.get(qn('r:id'))]._target = TRELLO_URL
+    trocar_texto(link, TRELLO_URL)
 
 # ---------------------------------------------------------------- Artefato 6: DER com as 21 tabelas
 leg_der = achar_contem('– Diagrama de Entidade e Relacionamento')
