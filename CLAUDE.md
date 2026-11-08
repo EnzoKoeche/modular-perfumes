@@ -86,7 +86,7 @@ Abra **http://127.0.0.1:5050**. A porta 5000 no macOS é usada pelo AirPlay, por
 ## 8. Conferir que está tudo certo
 
 ```bash
-pytest -q       # esperado: 27 passed
+pytest -q       # esperado: 40 passed
 ```
 
 Os testes recriam um banco separado (`modular_perfumes_teste`) a partir dos scripts SQL, então
@@ -106,7 +106,7 @@ senha `modular_dev` · base `modular_perfumes`. (Para desligar: `docker stop mod
 
 ---
 
-## 10. Roteiro de demonstração (a 1ª Sprint inteira)
+## 10. Roteiro de demonstração (1ª e 2ª Sprints)
 
 1. **US1 — cadastro:** `/cadastro`, criar conta → cai no questionário.
 2. **US3 — questionário:** responder as 11 perguntas → o perfil olfativo é gerado em `/inicio`.
@@ -114,7 +114,10 @@ senha `modular_dev` · base `modular_perfumes`. (Para desligar: `docker stop mod
 4. **US4 — CRUD do admin:** entrar como admin → *Questionário* → criar, alterar e excluir pergunta.
    Pergunta que já tem resposta é **desativada**, não apagada (regra RN-05).
 5. **US5 — catálogo:** *Catálogo* → importar uma marca → o log registra incluídos e atualizados.
-6. **Extras da Sprint 2:** vitrine em `/perfumes/` e o consultor de IA em `/consultor/`.
+6. **US6 — pesos:** *Questionário* → botão *Pesos* de uma pergunta → notas de 0 a 10 por família.
+7. **US7 — ficha:** vitrine em `/perfumes/` → abrir um perfume (pirâmide olfativa e acordes).
+8. **US8 e US9 — consultor:** `/consultor/` → pedir uma indicação; os cartões vêm da ferramenta do agente.
+9. **US10 — sacola:** *Adicionar à sacola* na ficha ou no cartão → `/sacola/` → remover.
 
 ---
 

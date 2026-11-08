@@ -1,6 +1,6 @@
 # 06 — Arquitetura e agente de IA
 
-> **Status:** a stack abaixo está em uso desde a 1ª Sprint (código em `app/`). O agente de IA entra na Sprint 2.
+> **Status:** a stack abaixo está em uso desde a 1ª Sprint (código em `app/`). O agente de IA foi implementado na 2ª Sprint (`app/consultor.py`).
 
 ## Stack proposta
 
@@ -107,6 +107,8 @@ def ferramentas_do_cliente(usuario_id: int):
     return [obter_perfil_olfativo, buscar_perfumes, obter_ficha_perfume,
             listar_ofertas, registrar_recomendacao]
 ```
+
+**Como ficou na 2ª Sprint:** o código em `app/consultor.py` usa cinco ferramentas: `obter_perfil_olfativo`, `listar_acordes`, `buscar_perfumes`, `obter_ficha_perfume` e `registrar_recomendacao`. A `listar_ofertas` do esboço entra junto com as lojas parceiras (PBIs 12 a 15); até lá, `listar_acordes` mostra ao modelo os acordes que existem no catálogo, que vêm em inglês da API.
 
 **Por que as recomendações passam por uma ferramenta:** a tela mostra os cartões de perfume a partir de `registrar_recomendacao`, que só aceita `perfume_id` visível do banco. O texto livre do modelo explica; o dado estruturado prova. Isso atende a RN-09 e ao RNF-11, e impede que um perfume inexistente apareça como botão de compra.
 

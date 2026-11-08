@@ -121,9 +121,9 @@ Padrão pedido na disciplina: **COMO** (persona do PBB) · **POSSO** (PBI) · **
 
 **Objetivo da Sprint 2:** o cliente consulta a ficha do perfume, conversa com o agente consultor, recebe recomendações e monta a sacola; o administrador ajusta os pesos das alternativas.
 
-| US | Responsável | Situação em 30/10 |
+| US | Responsável | Situação em 08/11 |
 |---|---|---|
-| US6 | André Lagos | a fazer: tela de pesos no painel do administrador |
+| US6 | André Lagos | pronta (rota, tela de pesos, botão na lista de perguntas, testes) |
 | US7 | Enzo | pronta |
 | US8 | Enzo | pronta |
 | US9 | Enzo | pronta |

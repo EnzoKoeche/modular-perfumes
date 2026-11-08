@@ -5,9 +5,9 @@ Plataforma web gratuita de **consultoria olfativa com IA**. O cliente cria a con
 Projeto da disciplina **Experiência Criativa – Projetando Soluções Computacionais** (Bacharelado em Engenharia de Software, PUCPR).
 **Equipe:** Enzo Koeche Castagna · Angelo · André Lagos.
 
-> **Status:** 1ª Sprint implementada (5 user stories). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, user stories no padrão da rubrica, DER e script SQL da 1ª Sprint.
+> **Status:** 1ª e 2ª Sprints implementadas (US1 a US10, 40 testes automáticos). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, 28 PBIs, user stories no padrão da rubrica, DER e scripts SQL.
 
-## Rodar o site localmente (1ª Sprint)
+## Rodar o site localmente
 
 > Preparando uma máquina do zero (outro integrante, outro computador)? O passo a passo completo — programas a instalar, banco, `.env`, administrador e testes — está em [CLAUDE.md](CLAUDE.md).
 
@@ -40,8 +40,11 @@ pytest
 | US3 — questionário de perfil olfativo | `/questionario/` | `app/questionario.py` |
 | US4 — manter perguntas (admin) | `/admin/perguntas` | `app/admin.py` |
 | US5 — importar catálogo (admin) | `/admin/catalogo` | `app/admin.py` e `app/catalogo.py` |
-| Vitrine: melhores do ano, clássicos por década, lista e ficha (antecipado da Sprint 2) | `/perfumes/` | `app/vitrine.py` |
-| Consultor de IA com ferramentas no banco (antecipado da Sprint 2; exige `ANTHROPIC_API_KEY`) | `/consultor/` | `app/consultor.py` |
+| US6 — alternativas e pesos (admin) | `/admin/perguntas/<id>/pesos` | `app/admin.py` |
+| US7 — ficha do perfume (e a vitrine: melhores do ano, clássicos por década, lista) | `/perfumes/` e `/perfumes/<id>` | `app/vitrine.py` |
+| US8 — conversar com o consultor de IA (exige `ANTHROPIC_API_KEY`) | `/consultor/` | `app/consultor.py` |
+| US9 — recomendações personalizadas (cartões registrados pela ferramenta do agente) | `/consultor/` | `app/consultor.py` |
+| US10 — sacola: adicionar, listar e remover | `/sacola/` | `app/sacola.py` |
 
 No modo `CATALOGO_PROVEDOR=exemplo` (padrão), a importação usa perfumes fictícios das marcas *Casa Demo* e *Atelier Exemplo*. Para a API real, use `CATALOGO_PROVEDOR=fragella` e preencha `FRAGELLA_API_KEY` no `.env`.
 
