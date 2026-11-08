@@ -17,6 +17,7 @@ tabela('usuario', LARANJA, [
     PK,
     ('', 'nome', 'VARCHAR(80)', 'NN'),
     ('U', 'email', 'VARCHAR(120)', 'NN'),
+    ('', 'data_nascimento', 'DATE', 'NULL'),
     ('', 'senha_hash', 'VARCHAR(255)', 'NN'),
     ('', 'perfil', 'ENUM(CLIENTE,LOJISTA,ADMIN)', 'NN'),
     ('', 'ativo', 'TINYINT(1)', 'NN'),

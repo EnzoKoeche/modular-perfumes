@@ -10,7 +10,7 @@
 
 | ID | Requisito | Persona | Prioridade | PBI |
 |---|---|---|---|---|
-| RF-01 | O sistema deve permitir que um visitante crie uma conta de cliente informando nome, e-mail e senha. | Cliente | Sprint 1 | Realizar o cadastro do cliente |
+| RF-01 | O sistema deve permitir que um visitante crie uma conta de cliente informando nome, data de nascimento (não pode ser no futuro), e-mail e senha, com confirmação de senha. | Cliente | Sprint 1 | Realizar o cadastro do cliente |
 | RF-02 | O sistema deve autenticar qualquer usuário (cliente, lojista, administrador) por e-mail e senha e abrir uma sessão. | Todas | Sprint 1 | Realizar o login na plataforma |
 | RF-03 | O sistema deve permitir encerrar a sessão (logout) a qualquer momento. | Todas | Sprint 1 | Realizar o login na plataforma |
 | RF-04 | O sistema deve restringir cada tela e cada operação ao perfil de acesso correspondente (`CLIENTE`, `LOJISTA`, `ADMIN`). | Todas | Sprint 1 | Realizar o login na plataforma |

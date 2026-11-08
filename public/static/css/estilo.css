@@ -82,3 +82,6 @@ h1, h2, h3, .display-5 { letter-spacing: -.02em; }
               padding-right: .5rem; transition: border-color .12s ease, box-shadow .12s ease; }
 .form-check.escolhida { border-color: var(--mp-a1); box-shadow: 0 0 0 3px rgba(124, 58, 237, .12); }
 .form-check.escolhida .form-check-label { font-weight: 600; color: var(--mp-a1); }
+
+/* campos obrigatórios (cadastro) */
+.obrigatorio { color: #b42318; font-weight: 600; }

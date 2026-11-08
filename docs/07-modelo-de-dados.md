@@ -19,6 +19,7 @@ Conta de acesso de qualquer persona. O perfil define o que a pessoa pode fazer (
 | PK | `id` | INT AUTO_INCREMENT | não |
 |  | `nome` | VARCHAR(80) | não |
 | U | `email` | VARCHAR(120) | não |
+|  | `data_nascimento` | DATE | sim |
 |  | `senha_hash` | VARCHAR(255) | não |
 |  | `perfil` | ENUM(CLIENTE,LOJISTA,ADMIN) | não |
 |  | `ativo` | TINYINT(1) | não |

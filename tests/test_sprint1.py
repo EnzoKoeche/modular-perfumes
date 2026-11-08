@@ -10,7 +10,8 @@ RESPOSTAS_COMPLETAS = {  # alternativas da carga inicial (perguntas 1 a 10 são 
 
 
 def cadastrar(client, email='cliente@teste.com', senha='senha-segura'):
-    return client.post('/cadastro', data={'nome': 'Cliente', 'email': email, 'senha': senha, 'aceite': 'on'})
+    return client.post('/cadastro', data={'nome': 'Cliente', 'email': email, 'data_nascimento': '15/03/2000',
+                                          'senha': senha, 'confirmar_senha': senha, 'aceite': 'on'})
 
 
 # ---------------------------------------------------------------- US1 — cadastro do cliente
@@ -18,8 +19,9 @@ def cadastrar(client, email='cliente@teste.com', senha='senha-segura'):
 def test_us1_ca1_cadastro_grava_cliente_com_hash_e_leva_ao_questionario(client, banco):
     resp = cadastrar(client)
     assert resp.status_code == 302 and resp.headers['Location'].endswith('/questionario/')
-    u = banco("SELECT perfil, senha_hash FROM usuario WHERE email = 'cliente@teste.com'")[0]
+    u = banco("SELECT perfil, senha_hash, data_nascimento FROM usuario WHERE email = 'cliente@teste.com'")[0]
     assert u['perfil'] == 'CLIENTE' and u['senha_hash'] != 'senha-segura' and len(u['senha_hash']) > 40
+    assert str(u['data_nascimento']) == '2000-03-15'
 
 
 def test_us1_ca2_email_ja_cadastrado(client, banco):
@@ -35,6 +37,29 @@ def test_us1_ca3_campo_obrigatorio_ou_senha_curta(client, banco):
     html = resp.get_data(as_text=True)
     assert resp.status_code == 400 and 'is-invalid' in html and 'pelo menos 8 caracteres' in html
     assert banco("SELECT COUNT(*) AS n FROM usuario")[0]['n'] == 0
+
+
+def test_us1_ca3_senhas_que_nao_conferem(client, banco):
+    resp = client.post('/cadastro', data={'nome': 'Ana', 'email': 'ana@teste.com', 'data_nascimento': '15/03/2000',
+                                          'senha': 'senha-segura', 'confirmar_senha': 'outra-senha', 'aceite': 'on'})
+    assert resp.status_code == 400 and 'As senhas não conferem.' in resp.get_data(as_text=True)
+    assert banco("SELECT COUNT(*) AS n FROM usuario")[0]['n'] == 0
+
+
+def test_us1_ca3_data_de_nascimento_no_futuro_ou_invalida(client, banco):
+    dados = {'nome': 'Ana', 'email': 'ana@teste.com', 'senha': 'senha-segura', 'confirmar_senha': 'senha-segura',
+             'aceite': 'on'}
+    futuro = client.post('/cadastro', data={**dados, 'data_nascimento': '01/01/2999'})
+    assert futuro.status_code == 400 and 'não pode ser no futuro' in futuro.get_data(as_text=True)
+    invalida = client.post('/cadastro', data={**dados, 'data_nascimento': '31/02/2000'})
+    assert invalida.status_code == 400 and 'formato dd/mm/aaaa' in invalida.get_data(as_text=True)
+    assert banco("SELECT COUNT(*) AS n FROM usuario")[0]['n'] == 0
+
+
+def test_cadastro_marca_campos_obrigatorios_e_tem_mascara(client):
+    html = client.get('/cadastro').get_data(as_text=True)
+    assert html.count('class="obrigatorio"') == 7 and 'campos obrigatórios' in html
+    assert 'placeholder="dd/mm/aaaa"' in html and 'mascaraData' in html and 'confirmar_senha' in html
 
 
 # ---------------------------------------------------------------- US2 — login

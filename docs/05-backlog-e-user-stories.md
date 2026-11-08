@@ -57,7 +57,7 @@ Padrão pedido na disciplina: **COMO** (persona do PBB) · **POSSO** (PBI) · **
 
 ### US1 — PBI: Realizar o cadastro do cliente
 
-**COMO** Cliente, **POSSO** realizar o cadastro na plataforma, informando nome, e-mail e senha, **PARA** ter acesso grátis com login ao consultor olfativo.
+**COMO** Cliente, **POSSO** realizar o cadastro na plataforma, informando nome, data de nascimento, e-mail e senha, **PARA** ter acesso grátis com login ao consultor olfativo.
 
 *Feature:* Conta e Perfil Olfativo
 
@@ -65,7 +65,7 @@ Padrão pedido na disciplina: **COMO** (persona do PBB) · **POSSO** (PBI) · **
 |---|---|---|---|---|
 | CA1 | fluxo principal | estou na página de cadastro | informo nome, e-mail válido e senha com no mínimo 8 caracteres e aciono "Criar conta" | o sistema grava a conta com o perfil "cliente", guarda a senha criptografada e me leva ao questionário de perfil olfativo. |
 | CA2 | exceção | estou na página de cadastro | informo um e-mail que já possui conta e aciono "Criar conta" | o sistema não cria a conta e exibe a mensagem "Este e-mail já está cadastrado". |
-| CA3 | exceção | estou na página de cadastro | deixo um campo obrigatório vazio ou informo senha com menos de 8 caracteres e aciono "Criar conta" | o sistema não envia o formulário e indica o campo que precisa ser corrigido. |
+| CA3 | exceção | estou na página de cadastro | deixo um campo obrigatório vazio, informo senha com menos de 8 caracteres, senhas que não conferem ou data de nascimento no futuro e aciono "Criar conta" | o sistema não envia o formulário e indica o campo que precisa ser corrigido, com a mensagem do problema. |
 
 ### US2 — PBI: Realizar o login na plataforma
 

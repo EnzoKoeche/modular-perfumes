@@ -1,6 +1,6 @@
 """US1 (cadastro do cliente) e US2 (login na plataforma), mais o controle de acesso por perfil."""
 import re
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from functools import wraps
 
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -11,6 +11,7 @@ from . import db
 bp = Blueprint('auth', __name__)
 
 EMAIL_VALIDO = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+DATA_BR = re.compile(r'^\d{2}/\d{2}/\d{4}$')   # dd/mm/aaaa, a mesma máscara do formulário
 MAX_TENTATIVAS = 5          # RNF-05
 METODO_HASH = 'pbkdf2:sha256'   # RNF-01: hash com salt; funciona em qualquer instalação do Python
 BLOQUEIO = timedelta(minutes=15)
@@ -77,26 +78,38 @@ def _entrar(usuario_id):
 def cadastro():
     if usuario_logado():
         return redirect(pagina_inicial(usuario_logado()))
-    dados, erros = {'nome': '', 'email': ''}, {}
+    dados, erros = {'nome': '', 'email': '', 'data_nascimento': ''}, {}
     if request.method == 'POST':
         dados = {'nome': request.form.get('nome', '').strip(),
-                 'email': request.form.get('email', '').strip().lower()}
+                 'email': request.form.get('email', '').strip().lower(),
+                 'data_nascimento': request.form.get('data_nascimento', '').strip()}
         senha = request.form.get('senha', '')
+        nascimento = None
         if not dados['nome']:
             erros['nome'] = 'Informe o seu nome.'
         if not EMAIL_VALIDO.match(dados['email']):
             erros['email'] = 'Informe um e-mail válido.'
+        try:
+            if not DATA_BR.match(dados['data_nascimento']):
+                raise ValueError
+            nascimento = datetime.strptime(dados['data_nascimento'], '%d/%m/%Y').date()
+            if nascimento > date.today():
+                erros['data_nascimento'] = 'A data de nascimento não pode ser no futuro.'
+        except ValueError:
+            erros['data_nascimento'] = 'Informe uma data válida no formato dd/mm/aaaa.'
         if len(senha) < 8:
             erros['senha'] = 'A senha precisa ter pelo menos 8 caracteres.'
+        elif request.form.get('confirmar_senha', '') != senha:
+            erros['confirmar_senha'] = 'As senhas não conferem.'
         if not request.form.get('aceite'):
             erros['aceite'] = 'É preciso aceitar os termos de uso e a política de privacidade.'
         if not erros and db.consultar_um('SELECT 1 FROM usuario WHERE email = %s', (dados['email'],)):
             erros['email'] = 'Este e-mail já está cadastrado'           # US1 CA2
         if not erros:                                                  # US1 CA1
             novo_id = db.executar(
-                "INSERT INTO usuario (nome, email, senha_hash, perfil, aceite_termos_em) "
-                "VALUES (%s, %s, %s, 'CLIENTE', NOW())",
-                (dados['nome'], dados['email'], generate_password_hash(senha, method=METODO_HASH)))
+                "INSERT INTO usuario (nome, email, data_nascimento, senha_hash, perfil, aceite_termos_em) "
+                "VALUES (%s, %s, %s, %s, 'CLIENTE', NOW())",
+                (dados['nome'], dados['email'], nascimento, generate_password_hash(senha, method=METODO_HASH)))
             db.confirmar()
             _entrar(novo_id)
             flash('Conta criada! Agora responda o questionário de perfil olfativo.', 'success')
