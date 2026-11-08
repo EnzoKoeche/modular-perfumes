@@ -51,3 +51,8 @@ def test_ca3_alternativa_so_com_zeros_grava_e_avisa(admin, banco):
 
 def test_lista_de_perguntas_tem_botao_pesos(admin):
     assert '/admin/perguntas/2/pesos' in admin.get('/admin/perguntas').get_data(as_text=True)
+
+
+def test_ca2_tambem_e_validado_no_navegador(admin):
+    html = admin.get('/admin/perguntas/2/pesos').get_data(as_text=True)
+    assert 'novalidate' in html and 'id="erro-pesos"' in html and "'Use pesos inteiros de 0 a 10'" in html

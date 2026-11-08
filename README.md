@@ -5,7 +5,7 @@ Plataforma web gratuita de **consultoria olfativa com IA**. O cliente cria a con
 Projeto da disciplina **Experiência Criativa – Projetando Soluções Computacionais** (Bacharelado em Engenharia de Software, PUCPR).
 **Equipe:** Enzo Koeche Castagna · Angelo · André Lagos.
 
-> **Status:** 1ª e 2ª Sprints implementadas (US1 a US10, 40 testes automáticos). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, 28 PBIs, user stories no padrão da rubrica, DER e scripts SQL.
+> **Status:** 1ª e 2ª Sprints implementadas (US1 a US10, 44 testes automáticos). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, 28 PBIs, user stories no padrão da rubrica, DER e scripts SQL.
 
 ## Rodar o site localmente
 

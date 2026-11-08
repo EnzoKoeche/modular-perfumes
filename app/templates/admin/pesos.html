@@ -6,7 +6,8 @@
     <div class="card border-0 shadow-sm"><div class="card-body p-4">
       <h1 class="h4 mb-1">Pesos das alternativas</h1>
       <p class="text-muted mb-3">{{ pergunta.enunciado }}</p>
-      <form method="post">
+      <div class="alert alert-danger d-none" id="erro-pesos" role="alert"></div>
+      <form method="post" novalidate id="form-pesos">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="table-responsive mb-3">
           <table class="table align-middle mb-0">
@@ -36,4 +37,21 @@
     </div></div>
   </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+  // US6 CA2 no navegador: só envia com todos os pesos inteiros de 0 a 10 (o servidor confere de novo)
+  document.getElementById('form-pesos').addEventListener('submit', function (e) {
+    let valido = true;
+    this.querySelectorAll('input[type=number]').forEach(function (campo) {
+      const ok = /^\d+$/.test(campo.value.trim()) && Number(campo.value) <= 10;
+      campo.classList.toggle('is-invalid', !ok);
+      if (!ok) valido = false;
+    });
+    const erro = document.getElementById('erro-pesos');
+    erro.textContent = valido ? '' : 'Use pesos inteiros de 0 a 10';
+    erro.classList.toggle('d-none', valido);
+    if (!valido) { e.preventDefault(); window.scrollTo(0, 0); }
+  });
+</script>
 {% endblock %}

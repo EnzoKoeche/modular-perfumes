@@ -86,7 +86,7 @@ Abra **http://127.0.0.1:5050**. A porta 5000 no macOS é usada pelo AirPlay, por
 ## 8. Conferir que está tudo certo
 
 ```bash
-pytest -q       # esperado: 40 passed
+pytest -q       # esperado: 44 passed
 ```
 
 Os testes recriam um banco separado (`modular_perfumes_teste`) a partir dos scripts SQL, então
