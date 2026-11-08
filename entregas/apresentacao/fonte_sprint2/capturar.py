@@ -19,7 +19,7 @@ PASTA = pathlib.Path(__file__).parent
 IMG = PASTA / 'img'
 IMG.mkdir(exist_ok=True)
 ADMIN = {'email': 'apresentacao@modular.local', 'senha': secrets.token_urlsafe(12)}
-CLIENTE = {'nome': 'Marina Demo', 'email': 'marina.demo@exemplo.com', 'senha': 'perfume2026'}
+CLIENTE = {'nome': 'Marina Demo', 'email': 'marina.demo@exemplo.com', 'senha': 'perfume2026', 'nascimento': '15/03/2000'}
 MARCAS = sys.argv[1:] or ['Casa Demo', 'Atelier Exemplo']
 # perfil fresco: iniciante, dia a dia e calor, cítricos e brisa do mar, leve, unissex, durante o dia
 RESPOSTAS = [1, 4, 7, 9, 13, 15, 19, 22, 26, 28, 32, 35, 38]
@@ -101,6 +101,7 @@ with sync_playwright() as p:
     foto(pg, 'us6_tela', altura=900)
     pg.click('button:has-text("Salvar pesos")'); pg.wait_for_timeout(500)
     foto(pg, 'us6_ca1', altura=360)
+    pg.goto(B + f'/admin/perguntas/{q3}/pesos')        # tela limpa: o CA2 é barrado no navegador, sem recarregar
     campo = pg.locator('input[type=number]').first
     original = campo.input_value()
     campo.evaluate('c => { c.removeAttribute("min"); c.removeAttribute("max"); }')
@@ -136,12 +137,32 @@ with sync_playwright() as p:
     foto(pg, 'us7_ca2', altura=420)
     banco('UPDATE perfume SET visivel = 1 WHERE id = %s', (oculto,))
 
+    # login obrigatório: visitante tenta abrir a sacola
+    pg.goto(B + '/sacola/'); pg.wait_for_url('**/login**')
+    foto(pg, 'auth_exigida', altura=560)
+
     # ---------------------------------------------------------------- cliente
+    # US1 (ajuste): CA3 — senhas diferentes e data no futuro; o navegador não envia
+    pg.set_viewport_size({'width': 1280, 'height': 1300})   # o formulário inteiro cabe, sem o menu fixo por cima
     pg.goto(B + '/cadastro')
-    pg.fill('#nome', CLIENTE['nome']); pg.fill('#email', CLIENTE['email']); pg.fill('#senha', CLIENTE['senha'])
+    foto(pg, 'us1_vazio', '.card')
+    pg.fill('#nome', CLIENTE['nome']); pg.fill('#email', CLIENTE['email'])
+    pg.locator('#data_nascimento').press_sequentially('01012999')
+    pg.fill('#senha', CLIENTE['senha']); pg.fill('#confirmar_senha', 'outra-senha')
     pg.check('#aceite')
+    pg.click('button:has-text("Criar conta")'); pg.wait_for_timeout(400)
+    foto(pg, 'us1_ca3', '.card')
+    ev['us1_ca3_url'] = pg.url
+    # CA1 — tudo certo
+    pg.fill('#data_nascimento', '')
+    pg.locator('#data_nascimento').press_sequentially(CLIENTE['nascimento'].replace('/', ''))
+    pg.fill('#confirmar_senha', CLIENTE['senha'])
+    pg.dispatch_event('#confirmar_senha', 'input')
     foto(pg, 'us1_formulario', '.card')
     pg.click('button:has-text("Criar conta")'); pg.wait_for_url('**/questionario/')
+    pg.set_viewport_size({'width': 1280, 'height': 800})
+    ev['us1_banco'] = banco("SELECT id, nome, email, data_nascimento, perfil, LEFT(senha_hash, 20) AS senha_hash "
+                            "FROM usuario WHERE email = %s", (CLIENTE['email'],))
     foto(pg, 'us3_questionario', altura=800)
     # US9 CA3: antes de concluir o questionário, o consultor manda de volta para ele
     pg.goto(B + '/consultor/'); pg.wait_for_url('**/questionario/')
@@ -193,9 +214,31 @@ with sync_playwright() as p:
         'SELECT p.nome AS perfume, s.adicionado_em FROM sacola_item s JOIN perfume p ON p.id = s.perfume_id '
         'JOIN usuario u ON u.id = s.usuario_id WHERE u.email = %s', (CLIENTE['email'],))
 
+    # logout
+    pg.click('button:has-text("Sair")'); pg.wait_for_load_state()
+    foto(pg, 'logout', altura=420)
+    # US1 CA2 — e-mail já cadastrado (validação no servidor)
+    pg.set_viewport_size({'width': 1280, 'height': 1300})
+    pg.goto(B + '/cadastro')
+    pg.fill('#nome', 'Marina de Novo'); pg.fill('#email', CLIENTE['email'])
+    pg.locator('#data_nascimento').press_sequentially('20051990')
+    pg.fill('#senha', 'outra-senha-1'); pg.fill('#confirmar_senha', 'outra-senha-1'); pg.check('#aceite')
+    pg.click('button:has-text("Criar conta")'); pg.wait_for_timeout(500)
+    foto(pg, 'us1_ca2', '.card')
+    pg.set_viewport_size({'width': 1280, 'height': 800})
+    ev['us1_ca2_total'] = banco('SELECT COUNT(*) AS n FROM usuario WHERE email = %s', (CLIENTE['email'],))[0]['n']
+
     # US2 — login de volta cai no perfil
-    sair(pg)
     entrar(pg, CLIENTE['email'], CLIENTE['senha'], '**/inicio')
+
+    # responsivo: as mesmas telas num celular (390 px)
+    cel = nav.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+    pc = cel.new_page()
+    pc.goto(B + '/login'); pc.fill('#email', CLIENTE['email']); pc.fill('#senha', CLIENTE['senha'])
+    pc.click('button:has-text("Entrar")'); pc.wait_for_url('**/inicio')
+    for rota, nome in ((f'/perfumes/{alvo}', 'mobile_ficha'), ('/consultor/', 'mobile_consultor'), ('/sacola/', 'mobile_sacola')):
+        pc.goto(B + rota); pc.wait_for_load_state('networkidle'); pc.wait_for_timeout(500)
+        pc.screenshot(path=str(IMG / f'{nome}.png'))
     nav.close()
 
 # ---------------------------------------------------------------- evidências do banco

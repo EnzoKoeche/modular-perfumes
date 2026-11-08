@@ -179,154 +179,259 @@ TESTES_POR_CA = [  # (US, CA1, CA2, CA3) -> nome do teste automático
     ('US10', 'test_ca1_adiciona_e_lista_na_sacola', 'test_ca2_mesmo_perfume_nao_duplica', 'test_ca3_remove_da_sacola'),
 ]
 
-# ---------------------------------------------------------------- 1. abertura
 
+
+def linha_pbi(n, nome, persona, sprint):
+    cls = {1: 's1', 2: 's2'}.get(sprint, 'sx')
+    estado = 'entregue' if sprint <= 2 else 'planejado'
+    return (f'<tr class="{cls}"><td class="mono">{n:02d}</td><td>{e(nome)}</td><td>{e(persona)}</td>'
+            f'<td><span class="tag {cls}">Sprint {sprint}</span></td><td class="mono">{estado}</td></tr>')
+
+TESTES_POR_CA.insert(0, ('US1', 'test_us1_ca1_cadastro_grava_cliente_com_hash_e_leva_ao_questionario',
+                         'test_us1_ca2_email_ja_cadastrado', 'test_us1_ca3_senhas_que_nao_conferem · …_data_de_nascimento_no_futuro'))
+
+# roteiro da demonstração ao vivo por história: (passos, consulta ao banco)
+DEMO = {
+    'US1': (['Sair da conta e abrir "Criar conta"',
+             'CA3: data 01/01/2999 e senhas diferentes → o formulário não é enviado',
+             'CA1: corrigir e criar a conta → cai no questionário',
+             'CA2: tentar o mesmo e-mail de novo → "Este e-mail já está cadastrado"'],
+            "SELECT nome, email, data_nascimento, perfil\nFROM usuario ORDER BY id DESC LIMIT 1;"),
+    'US6': (['Entrar como administrador → Questionário → botão "Pesos"',
+             'CA1: mudar um peso e "Salvar pesos" → "Pesos atualizados"',
+             'CA2: digitar −3 ou 11 → "Use pesos inteiros de 0 a 10", nada gravado',
+             'CA3: abrir "Para quem é o perfume?" e salvar → aviso de alternativa sem afinidade'],
+            "SELECT a.texto, f.nome, ap.peso\nFROM alternativa_peso ap\nJOIN alternativa a ON a.id = ap.alternativa_id\n"
+            "JOIN familia_olfativa f ON f.id = ap.familia_id\nWHERE a.pergunta_id = 3;"),
+    'US7': (['Sem login, abrir Perfumes → um perfume (CA3: convite para criar conta)',
+             'Logado, abrir a mesma ficha (CA1: pirâmide, acordes e "Adicionar à sacola")',
+             'CA2: abrir /perfumes/99999 → "Perfume não encontrado." (404)'],
+            "SELECT p.nome, pn.nivel, n.nome AS nota\nFROM perfume p JOIN perfume_nota pn ON pn.perfume_id = p.id\n"
+            "JOIN nota_olfativa n ON n.id = pn.nota_id\nWHERE p.id = 1;"),
+    'US8': (['Consultor → "Quero um perfume fresco para o trabalho, no calor."',
+             'US8 CA1 e US9 CA1: resposta + cartões dos perfumes',
+             'US9 CA3: com uma conta sem questionário, abrir o consultor → vai ao questionário',
+             'US8 CA2 e CA3 e US9 CA2: mostrar os testes automáticos (pág. 25)'],
+            "SELECT papel, LEFT(conteudo_json, 60) FROM mensagem\nORDER BY id DESC LIMIT 2;\n"
+            "SELECT posicao, perfume_id, justificativa\nFROM recomendacao ORDER BY id DESC LIMIT 2;"),
+    'US10': (['CA1: "Adicionar à sacola" no cartão da recomendação',
+              'CA2: na ficha do mesmo perfume, adicionar de novo → não duplica',
+              'CA3: "Remover" na sacola → "Perfume removido da sacola."'],
+             "SELECT u.nome, p.nome AS perfume, s.adicionado_em\nFROM sacola_item s JOIN usuario u ON u.id = s.usuario_id\n"
+             "JOIN perfume p ON p.id = s.perfume_id;"),
+}
+
+
+def caixa_demo(chave):
+    passos, sql = DEMO[chave]
+    return (f'<div class="card demo"><span class="mono rot">AO VIVO, NESTA ORDEM</span>'
+            + ''.join(f'<p class="passo-demo"><span class="mono">{i + 1}</span>{e(p)}</p>' for i, p in enumerate(passos))
+            + f'<span class="mono rot">BANCO PREENCHIDO E RECUPERADO</span><pre>{e(sql)}</pre></div>')
+
+
+def secao(numero, titulo, sub, minutos):
+    add(f'''<div class="capa secao"><div class="chips"><span class="chip">[ {numero} ]</span><span class="chip">{minutos} MIN</span></div>
+  <h1>{titulo}</h1><p class="sub">{sub}</p></div>''', escuro=True)
+
+
+US_POR_COD = {u['cod']: u for u in US2}
+
+# ---------------------------------------------------------------- abertura
 add(f'''<div class="capa">
-  <div class="chips"><span class="chip">EXPERIÊNCIA CRIATIVA · PUCPR</span><span class="chip">{SPRINT}</span><span class="chip">PROJETO COMPLETO</span></div>
+  <div class="chips"><span class="chip">EXPERIÊNCIA CRIATIVA · PUCPR</span><span class="chip">{SPRINT}</span><span class="chip">RESULTADOS PARA A BANCA</span></div>
   <h1>Modular <span class="grad">Perfumes</span></h1>
   <p class="sub">Consultor olfativo com inteligência artificial: do questionário à sacola</p>
   <div class="equipe"><div><span class="mono">EQUIPE</span><p>Enzo Koeche Castagna · Angelo · André Lagos</p></div>
   <div><span class="mono">ORIENTADORES</span><p>Profa. Cristina Verçosa P. B. de Souza · Prof. Giulio Domenico Bordin · Profa. Rosilene Fernandes</p></div></div>
 </div>''', escuro=True)
 
-add(topo('ROTEIRO', 'O que vamos mostrar') + '''
-<div class="grade4">
-  <div class="card passo"><span class="num mono">01</span><h3>O produto</h3><p>Problema, solução e como o cliente usa o site, do começo ao fim.</p><span class="tempo mono">PÁG. 3–5</span></div>
-  <div class="card passo"><span class="num mono">02</span><h3>Canvas PBB</h3><p>Três personas, nove features e os 28 PBIs divididos em sprints.</p><span class="tempo mono">PÁG. 6–9</span></div>
-  <div class="card passo"><span class="num mono">03</span><h3>User Stories</h3><p>As cinco histórias da 2ª Sprint, cada uma com três critérios de aceite.</p><span class="tempo mono">PÁG. 10–12</span></div>
-  <div class="card passo"><span class="num mono">04</span><h3>Implementação</h3><p>Como funciona por dentro, cada critério no site e no banco, testes e processo.</p><span class="tempo mono">PÁG. 13–26</span></div>
-</div>
-<p class="nota-rodape">Na 1ª Sprint entregamos a base (conta, questionário e catálogo). Nesta 2ª Sprint entregamos o valor principal: o administrador ajusta os pesos do questionário, e o cliente vê a ficha do perfume, conversa com o consultor de IA, recebe recomendações e monta a sacola.</p>''', 'ROTEIRO')
-
-# ---------------------------------------------------------------- 2. o produto
-
-add(topo('[1] O PRODUTO', 'Comprar perfume pela internet é comprar às cegas') + '''
+add(topo('ROTEIRO', 'Dez minutos, no roteiro da banca') + '''
 <div class="grade2">
-  <div class="card"><span class="mono rot">O PROBLEMA</span>
-    <p class="item faz">Não dá para sentir o cheiro antes de comprar.</p>
-    <p class="item faz">"Notas de saída" e "acorde amadeirado" não dizem nada para quem está começando.</p>
-    <p class="item faz">Resultado: compra errada, arrependimento e devolução.</p>
-    <p class="item faz">Lojas gastam para atrair visitantes que ainda não sabem o que querem.</p></div>
-  <div class="card"><span class="mono rot">A SOLUÇÃO</span>
-    <p class="item espera">Plataforma web gratuita, com cadastro e login.</p>
-    <p class="item espera">Um questionário descobre o perfil olfativo do cliente.</p>
-    <p class="item espera">Um agente de IA conversa com ele e recomenda perfumes do catálogo, explicando o porquê.</p>
-    <p class="item espera">A compra acontece na loja parceira: o site não vende nem cobra.</p></div>
+  <div class="card passo"><span class="num mono">[ 1 ] · 2 MIN</span><h3>Canvas PBB atualizado</h3>
+    <p>Quais personas, features e PBIs entraram na 2ª Sprint, e os ajustes feitos desde a 1ª.</p><span class="tempo mono">PÁG. 3–6</span></div>
+  <div class="card passo"><span class="num mono">[ 2 ] · 8 MIN</span><h3>Product Increment ao vivo</h3>
+    <p>Cada história com os critérios de aceite funcionando no site, o banco preenchido e recuperado, e a interface (validação, perfil logado, login obrigatório, logout).</p><span class="tempo mono">PÁG. 7–18</span></div>
 </div>
-<p class="nota-rodape"><b>Em uma frase:</b> para quem quer comprar perfume pela internet e não sabe qual escolher, o Modular Perfumes é um consultor olfativo com IA que entende o seu perfil e leva você direto à loja do perfume certo.</p>''', '[1] O PRODUTO')
+<p class="nota-rodape">A demonstração é ao vivo. Cada história tem uma página com os passos da demonstração e a consulta ao banco, e outra com os prints do mesmo fluxo, caso algo falhe na hora. O apêndice (pág. 20 em diante) explica como funciona por dentro, para as perguntas da banca.</p>''', 'ROTEIRO')
 
-passos = [('1', 'Cria a conta', 'US1 · US2', 'Nome, e-mail e senha. Login com sessão segura.', 'S1'),
-          ('2', 'Responde o questionário', 'US3 · US4 · US6', '11 perguntas. Os pesos de cada resposta geram o perfil olfativo.', 'S1 · S2'),
-          ('3', 'Conversa com o consultor', 'US8 · US9', 'O agente de IA lê o perfil, busca no catálogo e recomenda com justificativa.', 'S2'),
-          ('4', 'Vê a ficha do perfume', 'US5 · US7', 'Pirâmide olfativa e acordes, vindos da API de catálogo.', 'S1 · S2'),
-          ('5', 'Guarda na sacola', 'US10', 'Junta os perfumes de que gostou para comprar nas lojas parceiras.', 'S2')]
-add(topo('[1] O PRODUTO', 'Como o cliente usa o site, em cinco passos') + '<div class="fluxo">' + ''.join(
-    f'<div class="card etapa"><span class="num mono">{n}</span><h3>{e(t)}</h3><p>{e(d)}</p>'
-    f'<span class="onde mono">{e(u)}</span><span class="sprint-tag mono">{s}</span></div>' for n, t, u, d, s in passos)
-    + '</div><p class="nota-rodape">Os passos 1 a 5 já funcionam. O próximo passo, <b>finalizar a sacola abrindo a loja de cada perfume</b> (PBI 15), depende das lojas parceiras e entra na 3ª Sprint.</p>',
-    '[1] O PRODUTO')
+# ---------------------------------------------------------------- [1] Canvas PBB
+secao(1, 'Canvas PBB atualizado <span class="grad">para a Sprint 2</span>', 'Personas, features e PBIs escolhidos, e os ajustes finais.', 2)
 
-add(topo('[1] O PRODUTO', 'O que é e o que não é') + '''
-<div class="grade2">
-  <div class="card"><span class="mono rot ok">É / FAZ</span>
-    <p class="item">Plataforma gratuita de consultoria olfativa, com login</p>
-    <p class="item">Agente de IA que recomenda a partir do perfil e explica o motivo</p>
-    <p class="item">Catálogo com foto, notas e acordes, importado de API externa</p>
-    <p class="item">Sacola que leva o cliente às lojas parceiras</p></div>
-  <div class="card"><span class="mono rot erro">NÃO É / NÃO FAZ</span>
-    <p class="item">Loja virtual: não vende, não cobra e não entrega</p>
-    <p class="item">Não guarda dados de cartão nem intermedia a compra</p>
-    <p class="item">Não libera o consultor sem login e sem o questionário respondido</p>
-    <p class="item">Não dá orientação médica (alergia ou pele: procurar um profissional)</p></div>
-</div>''', '[1] O PRODUTO')
+add(topo('[1] CANVAS PBB', 'Canvas PBB da 2ª Sprint', 'Em vermelho, os PBIs implementados nesta sprint. Com borda verde, os entregues na 1ª.')
+    + f'<div class="figura"><img src="file://{REPO / "entregas/pbb/Modular_Perfumes_Canvas_PBB_Sprint2.png"}" style="max-height:790px;max-width:100%;border-radius:12px;border:1px solid #e6e8ec"></div>',
+    '[1] CANVAS PBB')
 
-# ---------------------------------------------------------------- 3. canvas PBB
-
-cards = ''
-for nome, perfil, faz, espera, feats in PERSONAS:
-    cards += (f'<div class="card persona"><h3>{e(nome)}</h3><span class="mono perfil">perfil {perfil}</span>'
-              '<span class="mono rot">O QUE FAZ</span>' + ''.join(f'<p class="item faz">{e(x)}</p>' for x in faz)
-              + '<span class="mono rot">O QUE ESPERA</span>' + ''.join(f'<p class="item espera">{e(x)}</p>' for x in espera)
-              + '<span class="mono rot">FEATURES</span>' + ''.join(f'<p class="feat">{e(x)}</p>' for x in feats) + '</div>')
-add(topo('[2] CANVAS PBB', 'Três personas, cada uma com um papel no sistema') + f'<div class="grade3">{cards}</div>',
-    '[2] CANVAS PBB')
-
-add(topo('[2] CANVAS PBB', 'Product Backlog Building', 'O Canvas entregue na 1ª Sprint. As features e os PBIs não mudaram: a 2ª Sprint seguiu a ordem do backlog.')
-    + f'<div class="figura"><img src="file://{REPO / "entregas/pbb/Modular_Perfumes_Canvas_PBB_Sprint1.png"}" style="max-height:760px;max-width:100%;border-radius:12px;border:1px solid #e6e8ec"></div>',
-    '[2] CANVAS PBB')
-
-
-def linha_pbi(n, nome, persona, sprint):
-    cls = {1: 's1', 2: 's2'}.get(sprint, 'sx')
-    estado = {1: 'entregue', 2: 'entregue'}.get(sprint, 'planejado')
-    return (f'<tr class="{cls}"><td class="mono">{n:02d}</td><td>{e(nome)}</td><td>{e(persona)}</td>'
-            f'<td><span class="tag {cls}">Sprint {sprint}</span></td><td class="mono">{estado}</td></tr>')
-
+escolhas = [('Administrador', 'Questionário de Perfil', [(6, 'Manter as alternativas e os pesos')],
+             'Os pesos definem como as respostas viram o perfil olfativo.'),
+            ('Cliente', 'Consultor Olfativo por IA', [(7, 'Consultar a ficha do perfume'), (8, 'Conversar com o agente consultor'),
+                                                      (9, 'Receber as recomendações personalizadas')],
+             'É o valor principal do produto: a conversa que recomenda.'),
+            ('Cliente', 'Sacola e Compra nas Lojas', [(10, 'Adicionar e remover perfumes da sacola')],
+             'Guarda o que o cliente gostou; a compra nas lojas vem na Sprint 3.')]
+add(topo('[1] CANVAS PBB', 'Persona → feature → PBIs escolhidos') + '<div class="grade3">' + ''.join(
+    f'<div class="card escolha"><span class="mono rot">PERSONA</span><h3>{e(p)}</h3><span class="mono rot">FEATURE</span>'
+    f'<p class="feat">{e(f)}</p><span class="mono rot">PBIs DA SPRINT 2</span>'
+    + ''.join(f'<p class="item espera"><b class="mono">US{n}</b> {e(t)}</p>' for n, t in pbis)
+    + f'<p class="obs">{e(por)}</p></div>' for p, f, pbis, por in escolhas) + '</div>'
+    + '''<div class="card ajustes"><span class="mono rot">AJUSTES FINAIS DESDE A 1ª SPRINT</span>
+    <p><b>US1, cadastro:</b> data de nascimento com máscara (não pode ser no futuro), confirmação de senha, campos obrigatórios marcados e dicas de preenchimento.</p>
+    <p><b>US9 CA3:</b> sem questionário, o consultor agora leva ao questionário. <b>US6 CA2:</b> a mensagem do critério aparece também no navegador.</p></div>''',
+    '[1] CANVAS PBB')
 
 meia = len(PBIS) // 2
-add(topo('[2] CANVAS PBB', 'Product Backlog: 28 PBIs em ordem de sprint') + '<div class="grade2 backlog">'
+add(topo('[1] CANVAS PBB', 'Product Backlog: 10 de 28 PBIs entregues') + '<div class="grade2 backlog">'
     + ''.join('<table class="dados pbis"><thead><tr><th>#</th><th>PBI</th><th>Persona</th><th>Sprint</th><th>Estado</th></tr></thead><tbody>'
               + ''.join(linha_pbi(*p) for p in parte) + '</tbody></table>' for parte in (PBIS[:meia], PBIS[meia:]))
-    + '</div><p class="nota-rodape"><b>10 de 28 PBIs entregues.</b> A ordem vem do valor: primeiro a base (acesso, questionário e catálogo), depois o consultor e a sacola, e por fim os papéis de lojista e administrador.</p>',
-    '[2] CANVAS PBB')
+    + '</div><p class="nota-rodape">A ordem vem do valor: primeiro a base (acesso, questionário e catálogo), depois o consultor e a sacola, e por fim os papéis de lojista e administrador.</p>',
+    '[1] CANVAS PBB')
 
-add(topo('[2] CANVAS PBB', 'PBIs implementados na 2ª Sprint') + '<table class="dados grande"><thead><tr><th></th><th>PBI</th><th>Persona</th><th>Feature</th><th>Responsável</th></tr></thead><tbody>'
-    + ''.join(f'<tr><td><span class="selo">{u["cod"]}</span></td><td><b>{e(u["nome"])}</b></td><td>{e(u["persona"])}</td>'
-              f'<td>{e(u["feature"])}</td><td>{e(u["dono"])}</td></tr>' for u in US2)
-    + '</tbody></table><p class="nota-rodape"><b>Objetivo da sprint:</b> o cliente consulta a ficha do perfume, conversa com o agente consultor, recebe recomendações e monta a sacola; o administrador ajusta os pesos das alternativas.</p>',
-    '[2] CANVAS PBB')
+# ---------------------------------------------------------------- [2] Product Increment
+secao(2, 'Product Increment <span class="grad">ao vivo</span>', 'Cada história com os critérios de aceite, a tela e o banco.', 8)
 
-# ---------------------------------------------------------------- 4. user stories
+US1 = {'cod': 'US1', 'pbi': 1, 'dono': 'ajuste da 1ª Sprint', 'nome': 'Realizar o cadastro do cliente', 'persona': 'Cliente',
+       'posso': 'realizar o cadastro, informando nome, data de nascimento, e-mail e senha',
+       'para': 'ter acesso grátis com login ao consultor olfativo',
+       'cas': [('fluxo principal', ('estou na página de cadastro', 'informo os dados válidos e aciono "Criar conta"',
+                                    'grava a conta com a senha criptografada e me leva ao questionário')),
+               ('exceção', ('estou na página de cadastro', 'informo um e-mail que já tem conta',
+                            'não cria a conta e exibe "Este e-mail já está cadastrado"')),
+               ('exceção', ('estou na página de cadastro', 'deixo campo vazio, senhas diferentes ou data no futuro',
+                            'não envia o formulário e mostra a mensagem no campo a corrigir'))]}
 
-add(topo('[3] USER STORIES', 'Administrador e ficha do perfume') + f'<div class="grade2">{cartao_us(US2[0])}{cartao_us(US2[1])}</div>',
-    '[3] USER STORIES')
-add(topo('[3] USER STORIES', 'Consultor de IA') + f'<div class="grade2">{cartao_us(US2[2])}{cartao_us(US2[3])}</div>',
-    '[3] USER STORIES')
-add(topo('[3] USER STORIES', 'Sacola, e como lemos uma user story') + f'''<div class="grade2">{cartao_us(US2[4])}
-  <div class="card didatico"><span class="mono rot">COMO LER</span>
-    <p><b class="mono">COMO</b> quem usa (a persona do Canvas)</p>
-    <p><b class="mono">POSSO</b> o que ela faz (o PBI)</p>
-    <p><b class="mono">PARA</b> o benefício (vem da feature)</p>
-    <span class="mono rot">CRITÉRIOS DE ACEITE</span>
-    <p><b class="mono">CA1</b> o fluxo principal, quando tudo dá certo</p>
-    <p><b class="mono">CA2</b> o tratamento de um problema (exceção)</p>
-    <p><b class="mono">CA3</b> outro caminho possível ou outra exceção</p>
-    <p class="obs">Cada critério é escrito em <b>DADO QUE · QUANDO · ENTÃO</b> e vira um teste automático (pág. 22).</p></div>
-</div>''', '[3] USER STORIES')
-
-# ---------------------------------------------------------------- 5. como funciona por dentro
-
-add(topo('[4] COMO FUNCIONA', 'Arquitetura: um site Flask, um banco MySQL e duas APIs externas') + '''
-<div class="arq">
-  <div class="caixa nav"><span class="mono rot">NAVEGADOR</span><p>Páginas HTML (Jinja2) com Bootstrap 5</p><p class="obs">o chat chama o servidor por fetch/JSON</p></div>
-  <div class="seta">→</div>
-  <div class="caixa srv"><span class="mono rot">SERVIDOR FLASK (PYTHON)</span>
-    <div class="mods">
-      <span>auth.py<small>US1 · US2</small></span><span>questionario.py<small>US3</small></span><span>admin.py<small>US4 · US5 · US6</small></span>
-      <span>vitrine.py<small>US7</small></span><span>consultor.py<small>US8 · US9</small></span><span>sacola.py<small>US10</small></span>
-      <span>catalogo.py<small>adaptador da API</small></span><span>db.py<small>SQL à mão (PyMySQL)</small></span></div>
-    <p class="obs">Cada rota confere o perfil (CLIENTE, LOJISTA, ADMIN) no servidor, com CSRF em todo formulário.</p></div>
-  <div class="seta">→</div>
-  <div class="pilha">
-    <div class="caixa db"><span class="mono rot">MYSQL 8</span><p>21 tabelas</p><p class="obs">17 da 1ª Sprint + 4 da 2ª</p></div>
-    <div class="caixa ext"><span class="mono rot">API DA ANTHROPIC</span><p>Claude (consultor)</p></div>
-    <div class="caixa ext"><span class="mono rot">API DE CATÁLOGO</span><p>Fragella (perfumes)</p></div>
+add(topo('[2] AJUSTE DA 1ª SPRINT · US1', 'Cadastro: validação completa') + f'''
+<div class="grade3 prints cadastro">
+  <div class="print"><span class="mono rot erro">CA3 · DATA NO FUTURO E SENHAS DIFERENTES: NÃO ENVIA</span>{img("us1_ca3")}</div>
+  <div class="print"><span class="mono rot erro">CA2 · E-MAIL JÁ CADASTRADO (SERVIDOR)</span>{img("us1_ca2")}</div>
+  <div class="coluna-prints">
+    {caixa_demo("US1")}
+    <span class="mono rot">BANCO · usuario (depois do CA1)</span>{tabela(EV["us1_banco"], ["nome", "data_nascimento", "perfil", "senha_hash"], ["nome", "nascimento", "perfil", "senha_hash (início)"])}
+    <p class="obs">Máscara dd/mm/aaaa, RegEx no e-mail, <b>*</b> nos obrigatórios e uma dica embaixo de cada campo. Depois do CA2, o e-mail continua com {EV["us1_ca2_total"]} conta.</p>
   </div>
+</div>''', '[2] PRODUCT INCREMENT')
+
+pesos_ca2 = EV['pesos_depois_ca2'][0]
+paginas_us = [
+    ('US6', 'Manter as alternativas e os pesos', f'''
+<div class="lado">
+  <div class="print"><span class="mono rot">TELA DE PESOS · UMA LINHA POR ALTERNATIVA, UMA COLUNA POR FAMÍLIA</span>{img("us6_tela")}</div>
+  <div class="banco coluna us6">
+    <div class="print"><span class="mono rot ok">CA1 · PESOS ATUALIZADOS</span>{img("us6_ca1")}</div>
+    <div class="print"><span class="mono rot erro">CA2 · PESO −3: NADA É GRAVADO</span>{img("us6_ca2")}</div>
+    <div class="print"><span class="mono rot aviso">CA3 · ALTERNATIVA TODA EM ZERO: GRAVA E AVISA</span>{img("us6_ca3")}</div>
+    <p class="obs">Banco depois do CA2: {pesos_ca2["pesos"]} pesos na pergunta, {pesos_ca2["negativos"]} negativos.</p>
+  </div>
+</div>'''),
+    ('US7', 'Consultar a ficha do perfume', f'''
+<div class="grade2 us7">
+  <div class="print"><span class="mono rot ok">CA1 · FICHA COMPLETA, COM "ADICIONAR À SACOLA"</span>{img("us7_ca1")}</div>
+  <div class="print"><span class="mono rot ok">CA3 · VISITANTE SEM LOGIN: CONVITE PARA CRIAR CONTA</span>{img("us7_ca3")}</div>
 </div>
-<p class="nota-rodape">As chaves das APIs ficam só no servidor, no arquivo <span class="mono">.env</span>, que não vai para o GitHub. Trocar o provedor de catálogo muda só o adaptador <span class="mono">catalogo.py</span>.</p>''',
-    '[4] COMO FUNCIONA')
+<div class="grade2 us7b">
+  <div class="print"><span class="mono rot erro">CA2 · PERFUME OCULTO: 404</span>{img("us7_ca2")}</div>
+  <p class="obs"><b>Pirâmide olfativa:</b> notas de <b>saída</b> (o primeiro cheiro), de <b>corpo</b> (o meio) e de <b>fundo</b> (o que fica na pele). <b>Acordes</b> são a impressão geral, com a intensidade que vem da API.</p>
+</div>'''),
+]
+
+
+def pagina_historia(cod_us, extra=None):
+    cards = cartao_us(US_POR_COD[cod_us]) + (cartao_us(US_POR_COD[extra]) if extra else '')
+    classe = 'pag-historia-dupla' if extra else 'pag-historia'
+    add(topo(f'[2] {cod_us}{" · " + extra if extra else ""} · HISTÓRIA', US_POR_COD[cod_us]['nome'] if not extra else 'Conversar com o agente e receber recomendações')
+        + f'<div class="{classe}">{cards}{caixa_demo(cod_us)}</div>', '[2] PRODUCT INCREMENT')
+
+
+for cod, nome, corpo_html in paginas_us:
+    pagina_historia(cod)
+    add(topo(f'[2] {cod} · NO SITE', nome) + corpo_html, '[2] PRODUCT INCREMENT')
+
+aviso_ia = '' if IA_REAL else (
+    '<p class="aviso-demo"><b>Sobre este print:</b> o consultor rodou com o <b>modelo simulado</b> dos testes automáticos, porque o computador '
+    'que gerou os prints não tem a chave da API da Anthropic. As ferramentas rodaram de verdade no banco; só o texto da resposta é fixo. '
+    'Ao vivo, com a <span class="mono">ANTHROPIC_API_KEY</span> no <span class="mono">.env</span>, quem responde é o Claude.</p>')
+pagina_historia('US8', 'US9')
+add(topo('[2] US8 · US9 · NO SITE', 'Conversa e recomendações personalizadas') + f'''
+<div class="lado">
+  <div class="print"><span class="mono rot ok">US8 CA1 · RESPOSTA NA TELA · US9 CA1 · CARTÕES REGISTRADOS PELA FERRAMENTA</span>{img("us8_us9_conversa")}</div>
+  <div class="banco coluna">
+    <span class="mono rot">BANCO · mensagem (histórico da conversa)</span>
+    {tabela(EV["mensagens"], ["id", "papel", "texto"])}
+    <span class="mono rot">BANCO · recomendacao</span>
+    {tabela(EV["recomendacoes"], ["posicao", "perfume", "justificativa"])}
+    <p class="obs"><b>US8 CA2:</b> sem chave ou com a API fora do ar, aparece "O consultor está indisponível agora" e o histórico fica. <b>US8 CA3:</b> na 31ª mensagem do dia, a IA nem é chamada. <b>US9 CA2:</b> a ferramenta recusa perfume inexistente ou oculto.</p>
+    {aviso_ia}
+  </div>
+</div>''', '[2] PRODUCT INCREMENT')
+
+pagina_historia('US10')
+add(topo('[2] US10 · NO SITE', 'Adicionar e remover perfumes da sacola') + f'''
+<div class="grade2 sacola">
+  <div class="coluna-prints">
+    <div class="print"><span class="mono rot ok">CA1 · ENTROU NA SACOLA (PELO CARTÃO DA RECOMENDAÇÃO)</span>{img("us10_ca1")}</div>
+    <div class="print"><span class="mono rot aviso">CA2 · O MESMO PERFUME DE NOVO: NÃO DUPLICA</span>{img("us10_ca2")}</div>
+  </div>
+  <div class="coluna-prints">
+    <div class="print"><span class="mono rot ok">CA3 · REMOVIDO DA SACOLA</span>{img("us10_ca3")}</div>
+    <span class="mono rot">BANCO · sacola_item (depois do CA3)</span>{tabela(EV["sacola"], ["perfume", "adicionado_em"])}
+    <p class="obs">Depois do CA2, a sacola continuou com {EV["us10_ca2_itens"]} item. A chave primária é <b>cliente + perfume</b>, então o próprio banco impede a duplicata.</p>
+  </div>
+</div>''', '[2] PRODUCT INCREMENT')
+
+itens_interface = [
+    ('Identidade visual em todas as páginas, com CSS / framework CSS', 'Bootstrap 5 + estilo.css próprio: mesmas cores, fontes e componentes', 'todas'),
+    ('Páginas responsivas', 'Menu vira botão no celular; colunas empilham (390 px)', 'pág. 18'),
+    ('Validação: RegEx / JavaScript, obrigatórios, máscara, data não futura, dicas, só envia válido', 'Cadastro (US1) e tela de pesos (US6)', 'pág. 8, 10'),
+    ('Perfil / identidade do usuário logado em todas as páginas autenticadas', 'Nome + selo "Cliente" ou "Administrador" no menu', 'todas'),
+    ('Confirmação de senha no cadastro', 'Campo "Confirmar senha", conferido no navegador e no servidor', 'pág. 8'),
+    ('Exige autenticação ao acessar uma URL sem login', 'Vai para o login com "Entre na sua conta para continuar."', 'pág. 18'),
+    ('Finaliza a sessão (logout)', 'Botão "Sair" → "Você saiu da sua conta."', 'pág. 18'),
+    ('Não permite campo único duplicado, com mensagem', 'E-mail: "Este e-mail já está cadastrado"; sacola sem duplicata (US10 CA2)', 'pág. 8, 16'),
+    ('Implementa todos os PBIs da Sprint 2, Front + Back', 'US6 a US10 com rotas, telas, banco e testes', 'pág. 9–16'),
+]
+add(topo('[2] INTERFACE E INTEGRAÇÃO', 'O checklist da banca, item por item')
+    + '<table class="dados checklist"><thead><tr><th>Exigência</th><th>Como atendemos</th><th>Onde ver</th></tr></thead><tbody>'
+    + ''.join(f'<tr><td><span class="ok-mark">✓</span> {e(a)}</td><td>{e(b)}</td><td class="mono">{e(c)}</td></tr>' for a, b, c in itens_interface)
+    + '</tbody></table>', '[2] PRODUCT INCREMENT')
+
+add(topo('[2] INTERFACE E INTEGRAÇÃO', 'Celular, login obrigatório e logout') + f'''
+<div class="interface">
+  <div class="print cel"><span class="mono rot">390 PX · FICHA</span>{img("mobile_ficha")}</div>
+  <div class="print cel"><span class="mono rot">390 PX · CONSULTOR</span>{img("mobile_consultor")}</div>
+  <div class="print cel"><span class="mono rot">390 PX · SACOLA</span>{img("mobile_sacola")}</div>
+  <div class="coluna-prints">
+    <div class="print"><span class="mono rot erro">SEM LOGIN, /sacola/ → LOGIN</span>{img("auth_exigida")}</div>
+    <div class="print"><span class="mono rot ok">LOGOUT</span>{img("logout")}</div>
+  </div>
+</div>''', '[2] PRODUCT INCREMENT')
+
+add('''<div class="capa fim">
+  <div class="chips"><span class="chip">2ª SPRINT ENTREGUE</span><span class="chip">10 DE 28 PBIs</span></div>
+  <h1>Obrigado!</h1>
+  <p class="sub">Próxima sprint: as <span class="grad">lojas parceiras</span> entram, e finalizar a sacola leva o cliente à loja de cada perfume.</p>
+  <div class="equipe"><div><span class="mono">GITHUB</span><p>github.com/EnzoKoeche/modular-perfumes</p></div>
+  <div><span class="mono">TRELLO</span><p>trello.com/b/PN46fipf</p></div></div>
+</div>''', escuro=True)
+
+# ---------------------------------------------------------------- apêndice (perguntas da banca)
+add(topo('APÊNDICE', 'Roteiro de fala (10 minutos)', 'Preencham a coluna "Quem". Treinem a demonstração ao vivo pelo menos uma vez com o cronômetro.')
+    + '<table class="dados roteiro"><thead><tr><th>Bloco</th><th>Páginas</th><th>Tempo</th><th>O que fazer</th><th>Quem</th></tr></thead><tbody>'
+    + ''.join(f'<tr><td><b>{e(b)}</b></td><td class="mono">{e(p)}</td><td class="mono">{e(t)}</td><td>{e(d)}</td><td class="quem"></td></tr>' for b, p, t, d in [
+        ('[1] Canvas PBB', '3–6', '2 min', 'Mostrar o Canvas da Sprint 2: persona → feature → PBIs em vermelho. Citar os ajustes finais (cadastro, US9, US6).'),
+        ('[2] Cadastro (ajuste)', '8', '1 min', 'Ao vivo: data no futuro e senhas diferentes, depois criar a conta, depois e-mail duplicado. Mostrar o usuario no banco.'),
+        ('[2] US6 · pesos', '9–10', '1,5 min', 'Ao vivo como administrador: salvar, digitar −3, salvar a pergunta "Para quem é". Mostrar alternativa_peso.'),
+        ('[2] US7 · ficha', '11–12', '1 min', 'Ficha sem login e com login; /perfumes/99999 para o 404.'),
+        ('[2] US8 e US9 · consultor', '13–14', '2 min', 'Mandar a mensagem, mostrar os cartões e as tabelas mensagem e recomendacao.'),
+        ('[2] US10 · sacola', '15–16', '1 min', 'Adicionar pelo cartão, adicionar de novo, remover. Mostrar sacola_item.'),
+        ('[2] Interface', '17–18', '0,5 min', 'Celular (F12 → modo dispositivo), abrir /sacola/ sem login, logout.'),
+    ])
+    + '</tbody></table><p class="nota-rodape"><b>Antes de entrar na sala:</b> banco e site no ar (<span class="mono">docker compose up -d db</span> e <span class="mono">flask --app app run --port 5050</span>), <span class="mono">ANTHROPIC_API_KEY</span> no <span class="mono">.env</span>, uma aba logada como administrador, outra como cliente com o questionário respondido, e um terminal com o MySQL aberto para as consultas.</p>',
+    'APÊNDICE')
 
 perfil = EV['perfil'][:5]
-add(topo('[4] COMO FUNCIONA', 'Do questionário ao perfil: a soma dos pesos (US3 + US6)') + f'''
+add(topo('APÊNDICE · COMO FUNCIONA', 'Do questionário ao perfil: a soma dos pesos (US3 + US6)') + f'''
 <div class="lado">
   <div class="card didatico">
     <span class="mono rot">A IDEIA</span>
-    <p>Cada alternativa do questionário vale pontos para uma ou mais <b>famílias olfativas</b> (floral, cítrico, amadeirado...). Quem define esses pontos é o administrador, na tela de pesos da <b>US6</b>.</p>
-    <span class="mono rot">EXEMPLO</span>
-    <div class="conta"><span>"Frutas cítricas"</span><span class="mono">→ Fresco/Cítrico +3</span></div>
-    <div class="conta"><span>"Brisa do mar"</span><span class="mono">→ Aquático +3</span></div>
-    <div class="conta"><span>"Leve e discreto"</span><span class="mono">→ Fresco/Cítrico +…</span></div>
-    <p>Ao concluir o questionário, o sistema <b>soma os pontos por família</b>. As famílias com mais pontos são as que mais combinam com o cliente, e é isso que o consultor de IA lê depois.</p>
+    <p>Cada alternativa do questionário vale pontos para uma ou mais <b>famílias olfativas</b>. Quem define esses pontos é o administrador, na tela de pesos da <b>US6</b>. Ao concluir o questionário, o sistema <b>soma os pontos por família</b>; as famílias com mais pontos são as que mais combinam com o cliente, e é isso que o consultor de IA lê depois.</p>
     <pre>INSERT INTO perfil_familia (perfil_id, familia_id, afinidade)
 SELECT %s, ap.familia_id, SUM(ap.peso)
 FROM resposta_item ri
@@ -334,12 +439,11 @@ JOIN alternativa_peso ap ON ap.alternativa_id = ri.alternativa_id
 WHERE ri.resposta_id = %s GROUP BY ap.familia_id;</pre></div>
   <div class="banco coluna">
     <div class="print"><span class="mono rot ok">PERFIL DA CLIENTE DE DEMONSTRAÇÃO</span>{img("us3_perfil")}</div>
-    <span class="mono rot">BANCO · perfil_familia (afinidade = soma dos pesos)</span>
-    {tabela(perfil, ["familia", "afinidade"])}
+    <span class="mono rot">BANCO · perfil_familia</span>{tabela(perfil, ["familia", "afinidade"])}
   </div>
-</div>''', '[4] COMO FUNCIONA')
+</div>''', 'APÊNDICE')
 
-add(topo('[4] COMO FUNCIONA', 'O agente de IA: o modelo conversa, o sistema confere') + '''
+add(topo('APÊNDICE · COMO FUNCIONA', 'O agente de IA: o modelo conversa, o sistema confere') + '''
 <div class="lado">
   <div class="ciclo">
     <div class="no cli"><span class="mono rot">1 · CLIENTE</span><p>"Quero um perfume fresco para o trabalho"</p></div>
@@ -358,193 +462,55 @@ add(topo('[4] COMO FUNCIONA', 'O agente de IA: o modelo conversa, o sistema conf
     <span class="mono rot">POR QUE É SEGURO</span>
     <p class="item">O modelo nunca escolhe de quem é o perfil: o id do cliente vem da sessão.</p>
     <p class="item">Só vira cartão o que passou por <span class="mono">registrar_recomendacao</span>, que recusa perfume inexistente ou oculto (US9 CA2).</p>
-    <p class="item">Pedidos como "ignore suas regras" não mudam o prompt de sistema.</p>
   </div>
-</div>''', '[4] COMO FUNCIONA')
+</div>''', 'APÊNDICE')
 
-# ---------------------------------------------------------------- 6. implementação, US a US
+add(topo('APÊNDICE · ARTEFATO 6', 'Modelo relacional: 21 tabelas (17 da 1ª Sprint + 4 da 2ª)')
+    + f'<div class="figura"><img src="file://{REPO / "entregas/der/Modular_Perfumes_DER_Logico_Sprint2.png"}" style="max-height:800px;max-width:100%;border-radius:12px;border:1px solid #e6e8ec;background:#fff"></div>',
+    'APÊNDICE')
 
-pesos_ca2 = EV['pesos_depois_ca2'][0]
-add(topo('[4] US6 · PESOS', 'Manter as alternativas e os pesos') + f'''
-<div class="lado">
-  <div class="print"><span class="mono rot">TELA DE PESOS · UMA LINHA POR ALTERNATIVA, UMA COLUNA POR FAMÍLIA</span>{img("us6_tela")}</div>
-  <div class="banco coluna us6">
-    <div class="print"><span class="mono rot ok">CA1 · PESOS ATUALIZADOS</span>{img("us6_ca1")}</div>
-    <div class="print"><span class="mono rot erro">CA2 · PESO −3: NADA É GRAVADO</span>{img("us6_ca2")}</div>
-    <div class="print"><span class="mono rot aviso">CA3 · ALTERNATIVA TODA EM ZERO: GRAVA E AVISA</span>{img("us6_ca3")}</div>
-    <p class="obs">Banco depois do CA2: {pesos_ca2["pesos"]} pesos na pergunta, {pesos_ca2["negativos"]} negativos. O botão <b>Pesos</b> fica na lista de perguntas da US4.</p>
-  </div>
-</div>''', '[4] IMPLEMENTAÇÃO')
-
-add(topo('[4] US7 · FICHA', 'Consultar a ficha do perfume') + f'''
-<div class="grade2 us7">
-  <div class="print"><span class="mono rot ok">CA1 · FICHA COMPLETA, COM "ADICIONAR À SACOLA"</span>{img("us7_ca1")}</div>
-  <div class="print"><span class="mono rot ok">CA3 · VISITANTE SEM LOGIN: CONVITE PARA CRIAR CONTA</span>{img("us7_ca3")}</div>
-</div>
-<div class="grade2 us7b">
-    <div class="print"><span class="mono rot erro">CA2 · PERFUME OCULTO: 404</span>{img("us7_ca2")}</div>
-    <p class="obs"><b>Pirâmide olfativa:</b> notas de <b>saída</b> (o primeiro cheiro), de <b>corpo</b> (o meio) e de <b>fundo</b> (o que fica na pele). <b>Acordes</b> são a impressão geral, com a intensidade que vem da API.</p>
-</div>''', '[4] IMPLEMENTAÇÃO')
-
-aviso_ia = '' if IA_REAL else (
-    '<p class="aviso-demo"><b>Sobre este print:</b> o consultor rodou com o <b>modelo simulado</b> dos testes automáticos, porque este computador '
-    'não tem a chave da API da Anthropic. As ferramentas rodaram de verdade no banco (perfil, busca e registro); só o texto da resposta é fixo. '
-    'Na apresentação ao vivo, com a <span class="mono">ANTHROPIC_API_KEY</span> no <span class="mono">.env</span>, quem responde é o Claude.</p>')
-add(topo('[4] US8 · US9 · CONSULTOR', 'Conversa e recomendações personalizadas') + f'''
-<div class="lado">
-  <div class="print"><span class="mono rot ok">US8 CA1 · RESPOSTA NA TELA · US9 CA1 · CARTÕES REGISTRADOS PELA FERRAMENTA</span>{img("us8_us9_conversa")}</div>
-  <div class="banco coluna">
-    <span class="mono rot">BANCO · mensagem (histórico da conversa)</span>
-    {tabela(EV["mensagens"], ["id", "papel", "texto"])}
-    <span class="mono rot">BANCO · recomendacao</span>
-    {tabela(EV["recomendacoes"], ["posicao", "perfume", "justificativa"])}
-    <p class="obs"><b>US8 CA2:</b> sem a chave ou com a API fora do ar, o cliente vê "O consultor está indisponível agora" e o histórico fica. <b>US8 CA3:</b> na 31ª mensagem do dia, a IA nem é chamada. <b>US9 CA3:</b> sem questionário, o consultor manda para o questionário.</p>
-    {aviso_ia}
-  </div>
-</div>''', '[4] IMPLEMENTAÇÃO')
-
-add(topo('[4] US10 · SACOLA', 'Adicionar e remover perfumes da sacola') + f'''
-<div class="grade2 sacola">
-  <div class="coluna-prints">
-    <div class="print"><span class="mono rot ok">CA1 · ENTROU NA SACOLA (PELO CARTÃO DA RECOMENDAÇÃO)</span>{img("us10_ca1")}</div>
-    <div class="print"><span class="mono rot aviso">CA2 · O MESMO PERFUME DE NOVO: NÃO DUPLICA</span>{img("us10_ca2")}</div>
-  </div>
-  <div class="coluna-prints">
-    <div class="print"><span class="mono rot ok">CA3 · REMOVIDO DA SACOLA</span>{img("us10_ca3")}</div>
-    <span class="mono rot">BANCO · sacola_item (depois do CA3)</span>{tabela(EV["sacola"], ["perfume", "adicionado_em"])}
-    <p class="obs">Depois do CA2, a sacola continuou com {EV["us10_ca2_itens"]} item. A sacola é uma tabela simples: <b>um cliente + um perfume</b>, com a chave primária nos dois campos, então o próprio banco impede a duplicata. Perfume oculto não entra na sacola (RN-08).</p>
-  </div>
-</div>''', '[4] IMPLEMENTAÇÃO')
-
-add(topo('[4] 1ª SPRINT · RECAPITULANDO', 'A base que a 2ª Sprint usa') + f'''
-<div class="grade2 prints mini">
-  <div class="print"><span class="mono rot">US1 · CADASTRO</span>{img("us1_formulario")}</div>
-  <div class="print"><span class="mono rot">US3 · QUESTIONÁRIO</span>{img("us3_questionario")}</div>
-  <div class="print"><span class="mono rot">US4 · PERGUNTAS (COM O BOTÃO PESOS)</span>{img("us4_lista")}</div>
-  <div class="print"><span class="mono rot">US5 · CATÁLOGO IMPORTADO</span>{img("us5_catalogo")}</div>
-</div>
-<p class="nota-rodape">US1 a US5 foram apresentadas na 1ª Sprint, com prints e consultas ao banco de cada critério de aceite. Elas continuam cobertas por {TESTES - 20} dos {TESTES} testes automáticos.</p>''',
-    '[4] IMPLEMENTAÇÃO')
-
-# ---------------------------------------------------------------- 7. banco, qualidade, processo
-
-t = EV['totais'][0]
-nota_catalogo = ('' if CATALOGO_REAL else
-                 '<p class="aviso-demo">Os prints usam o <b>catálogo de exemplo</b> (perfumes fictícios, sem foto), para não gastar a cota da API. '
-                 'Na 1ª Sprint importamos 350 perfumes reais da Fragella, com foto, de 7 marcas.</p>')
-add(topo('[4] BANCO DE DADOS', 'Quatro tabelas novas na 2ª Sprint') + f'''
-<div class="lado">
-  <div class="tabelas-novas">
-    <div class="tb"><h4>conversa</h4><p>id · <u>usuario_id</u> · iniciada_em · ultima_mensagem_em</p><span class="obs">uma conversa do cliente com o consultor</span></div>
-    <div class="tb"><h4>mensagem</h4><p>id · <u>conversa_id</u> · papel · conteudo_json · tokens_entrada · tokens_saida · tokens_cache</p><span class="obs">cada fala, com os tokens gastos (custo da IA)</span></div>
-    <div class="tb"><h4>recomendacao</h4><p>id · <u>conversa_id</u> · <u>perfume_id</u> · posicao · justificativa</p><span class="obs">só a ferramenta do agente grava aqui</span></div>
-    <div class="tb"><h4>sacola_item</h4><p><u>usuario_id</u> · <u>perfume_id</u> · adicionado_em</p><span class="obs">chave primária dupla: sem duplicatas</span></div>
-  </div>
-  <div class="banco coluna">
-    <div class="grade2 numeros">
-      <div class="card"><span class="mono rot">TABELAS</span><p class="grande">{t["tabelas"]}</p></div>
-      <div class="card"><span class="mono rot">PERFUMES NO BANCO</span><p class="grande">{t["perfumes"]}</p></div>
-    </div>
-    <span class="mono rot">COMO A TELA RECUPERA AS RECOMENDAÇÕES</span>
-    <pre>SELECT r.posicao, r.justificativa, p.nome, m.nome AS marca
-FROM recomendacao r
-JOIN perfume p ON p.id = r.perfume_id
-JOIN marca m   ON m.id = p.marca_id
-WHERE r.conversa_id = %s ORDER BY r.id;</pre>
-    <p class="obs">Script oficial: <span class="mono">entregas/sql/modular_perfumes_sprint2.sql</span>. Excluir a conta apaga em cascata conversas, mensagens e sacola (LGPD).</p>
-    {nota_catalogo}
-  </div>
-</div>''', '[4] IMPLEMENTAÇÃO')
+add(topo('APÊNDICE · ARTEFATO 8', 'Diagramas de atividades') + f'''
+<div class="grade2 atividades">
+  <div class="print"><img src="file://{REPO / "entregas/atividades/Modular_Perfumes_Atividades_Cliente.png"}"></div>
+  <div class="print"><img src="file://{REPO / "entregas/atividades/Modular_Perfumes_Atividades_Admin_Pesos.png"}"></div>
+</div>''', 'APÊNDICE')
 
 linhas = ''.join(f'<tr><td><span class="selo">{u}</span></td>' + ''.join(f'<td class="mono teste">{e(x)}</td>' for x in cas) + '</tr>'
                  for u, *cas in TESTES_POR_CA)
-add(topo('[4] QUALIDADE', f'{TESTES} testes automáticos: cada critério de aceite tem o seu') + f'''
+add(topo('APÊNDICE · QUALIDADE', f'{TESTES} testes automáticos: cada critério de aceite tem o seu') + f'''
 <table class="dados testes"><thead><tr><th></th><th>CA1</th><th>CA2</th><th>CA3</th></tr></thead><tbody>{linhas}</tbody></table>
 <div class="grade3 qualidade">
-  <div class="card"><span class="mono rot">COMO RODAM</span><p>Com <span class="mono">pytest</span>, num banco MySQL de teste recriado a cada rodada pelos scripts oficiais. Não mexem nos dados de desenvolvimento.</p></div>
-  <div class="card"><span class="mono rot">E A IA?</span><p>Nos testes, o Claude é substituído por um dublê. As ferramentas rodam de verdade no banco: o teste prova o que o sistema faz com a resposta, sem gastar a API.</p></div>
-  <div class="card"><span class="mono rot">SEGURANÇA</span><p>Senha com hash PBKDF2, bloqueio após 5 tentativas, CSRF nos formulários e perfil de acesso conferido no servidor.</p></div>
-</div>''', '[4] QUALIDADE')
+  <div class="card"><span class="mono rot">COMO RODAM</span><p>Com <span class="mono">pytest</span>, num banco MySQL de teste recriado a cada rodada pelos scripts oficiais.</p></div>
+  <div class="card"><span class="mono rot">E A IA?</span><p>Nos testes, o Claude é trocado por um dublê; as ferramentas rodam de verdade no banco, sem gastar a API.</p></div>
+  <div class="card"><span class="mono rot">SEGURANÇA</span><p>Senha com hash PBKDF2, bloqueio após 5 tentativas, CSRF e perfil conferido no servidor.</p></div>
+</div>''', 'APÊNDICE')
 
 autores = ''.join(f'<div class="card"><span class="mono rot">{e(nome.upper())}</span><p class="grande">{n}</p><p class="obs">commits</p></div>'
                   for n, nome in COMMITS)
-add(topo('[4] PROCESSO', 'Scrum no Trello, código no GitHub') + f'''
+add(topo('APÊNDICE · PROCESSO', 'Scrum no Trello, código no GitHub') + f'''
 <div class="colunas-trello">
   <div class="col"><span class="mono">PRODUCT BACKLOG</span><p>os 28 PBIs</p></div><div class="seta">→</div>
-  <div class="col"><span class="mono">SPRINT BACKLOG</span><p>os PBIs da sprint, com responsável e prazo</p></div><div class="seta">→</div>
+  <div class="col"><span class="mono">SPRINT BACKLOG</span><p>PBIs da sprint, com responsável e prazo</p></div><div class="seta">→</div>
   <div class="col"><span class="mono">EM DESENVOLVIMENTO</span><p>comentário "comecei"</p></div><div class="seta">→</div>
   <div class="col"><span class="mono">EM TESTE</span><p>testes passando</p></div><div class="seta">→</div>
   <div class="col ok"><span class="mono">CONCLUÍDO</span><p>critérios marcados + link do commit</p></div>
 </div>
 <div class="lado processo">
   <div class="card"><span class="mono rot">REGRAS DO TIME</span>
-    <p class="item">Commits pequenos, um passo por commit, com a US na mensagem ("US6: tela de pesos...").</p>
+    <p class="item">Commits pequenos, com a US na mensagem ("US6: tela de pesos...").</p>
     <p class="item">Antes do push, todos os testes verdes.</p>
-    <p class="item">Cada card tem checklist de tarefas e de critérios de aceite.</p>
-    <p class="item">Documentos das entregas (DER, SQL, PDF) são gerados por código, em <span class="mono">entregas/*/fonte</span>.</p></div>
+    <p class="item">Documentos das entregas (DER, SQL, PDF, especificação) gerados por código, em <span class="mono">entregas/*/fonte</span>.</p></div>
   <div class="grade2 numeros">{autores}</div>
-</div>''', '[4] PROCESSO')
+</div>''', 'APÊNDICE')
 
-add(topo('[4] RASTREABILIDADE', 'Do objetivo ao teste: um exemplo completo (US6)') + '''
-<div class="trilha">
-  <div class="elo"><span class="mono rot">OBJETIVO 1</span><p>Ajudar quem não entende de perfumaria a descobrir o que combina com o próprio perfil</p></div>
-  <div class="elo"><span class="mono rot">PERSONA · FEATURE</span><p>Administrador · Questionário de Perfil</p></div>
-  <div class="elo"><span class="mono rot">PBI 6 · US6</span><p>Manter as alternativas e os pesos</p></div>
-  <div class="elo"><span class="mono rot">REQUISITO</span><p>RF-08: manter alternativas e o peso de cada uma por família (CRUD)</p></div>
-  <div class="elo"><span class="mono rot">TABELAS</span><p>alternativa · alternativa_peso · familia_olfativa</p></div>
-  <div class="elo"><span class="mono rot">CÓDIGO</span><p>admin.py, rota /admin/perguntas/&lt;id&gt;/pesos · admin/pesos.html</p></div>
-  <div class="elo ok"><span class="mono rot">TESTES</span><p>tests/test_pesos.py: um teste por critério de aceite</p></div>
-</div>
-<p class="nota-rodape">A tabela completa (objetivo → feature → PBI → RF/RN/RNF → tabelas) está em <span class="mono">docs/11-rastreabilidade.md</span>, no GitHub.</p>''',
-    '[4] RASTREABILIDADE')
-
-prox = {3: [p for p in PBIS if p[3] == 3], 4: [p for p in PBIS if p[3] == 4], 5: [p for p in PBIS if p[3] == 5]}
+prox = {s: [p for p in PBIS if p[3] == s] for s in (3, 4, 5)}
 objetivos = {3: 'Lojas parceiras: cadastro, aprovação e ofertas; a sacola passa a abrir a loja de cada perfume.',
              4: 'Contas e cadastros completos; avaliação das recomendações e diretrizes do agente.',
              5: 'Curadoria do catálogo, sincronização agendada e indicadores para o administrador.'}
-add(topo('PRÓXIMOS PASSOS', 'O que vem nas próximas sprints') + '<div class="grade3">' + ''.join(
+add(topo('APÊNDICE · PRÓXIMOS PASSOS', 'O que vem nas próximas sprints') + '<div class="grade3">' + ''.join(
     f'<div class="card"><span class="mono rot">SPRINT {s}</span><p class="obj">{e(objetivos[s])}</p>'
     + ''.join(f'<p class="pbi-item"><span class="mono">{n:02d}</span> {e(nome)}</p>' for n, nome, _, _ in prox[s]) + '</div>'
-    for s in (3, 4, 5)) + '</div><p class="nota-rodape">Também na fila: a resposta do consultor aparecer aos poucos, enquanto é gerada (streaming, RF-21). Hoje ela chega inteira.</p>',
-    'PRÓXIMOS PASSOS')
-
-add(topo('GLOSSÁRIO', 'Os termos que aparecem na apresentação') + '''
-<div class="grade2 glossario">
-  <div class="card"><span class="mono rot">PERFUMARIA</span>
-    <p><b>Família olfativa</b> grupo de perfumes parecidos: floral, cítrico, amadeirado, oriental, aquático...</p>
-    <p><b>Notas de saída, corpo e fundo</b> a pirâmide: o que se sente primeiro, no meio e o que fica na pele.</p>
-    <p><b>Acorde</b> a impressão geral que a mistura de notas causa ("amadeirado", "cítrico").</p>
-    <p><b>Perfil olfativo</b> nível de conhecimento do cliente + afinidade com cada família.</p></div>
-  <div class="card"><span class="mono rot">TÉCNICOS</span>
-    <p><b>PBB / PBI</b> Product Backlog Building, a técnica do Canvas; PBI é cada item do backlog.</p>
-    <p><b>Critério de aceite</b> a condição, em DADO QUE · QUANDO · ENTÃO, que prova que a história funciona.</p>
-    <p><b>Agente e ferramentas</b> o modelo de IA decide; as ferramentas são funções do nosso sistema que ele pode chamar.</p>
-    <p><b>Tool Runner</b> recurso do SDK da Anthropic que repete "chamar o modelo → rodar a ferramenta" até a resposta final.</p></div>
-</div>''', 'GLOSSÁRIO')
-
-add('''<div class="capa fim">
-  <div class="chips"><span class="chip">2ª SPRINT ENTREGUE</span><span class="chip">10 DE 28 PBIs</span></div>
-  <h1>Obrigado!</h1>
-  <p class="sub">Próxima sprint: as <span class="grad">lojas parceiras</span> entram, e finalizar a sacola leva o cliente à loja de cada perfume.</p>
-  <div class="equipe"><div><span class="mono">GITHUB</span><p>github.com/EnzoKoeche/modular-perfumes</p></div>
-  <div><span class="mono">TRELLO</span><p>trello.com/b/PN46fipf</p></div></div>
-</div>''', escuro=True)
-
-# ---------------------------------------------------------------- apêndice: roteiro de fala
-
-blocos = [
-    ('Abertura e produto', 'págs. 1–5', '2 min', 'Problema (comprar às cegas), solução e os cinco passos do cliente. Feche dizendo o que esta sprint entrega.'),
-    ('Canvas PBB e backlog', 'págs. 6–9', '1,5 min', 'Personas com papéis diferentes, os 28 PBIs e por que o consultor e a sacola vieram agora (valor principal).'),
-    ('User stories', 'págs. 10–12', '1,5 min', 'Leia uma história inteira em voz alta (a US6 ou a US9) e mostre que CA1, CA2 e CA3 viraram testes.'),
-    ('Como funciona e US6', 'págs. 13–15, 16', '2 min', 'Perfil = soma dos pesos; o agente só recomenda o que a ferramenta registrou. Depois os três critérios da US6.'),
-    ('US7 a US10 no site', 'págs. 17–20', '2 min', 'Ficha, conversa, cartões e sacola, mostrando o banco ao lado de cada tela. Se der, demonstre ao vivo.'),
-    ('Qualidade, processo e próximos', 'págs. 21–27', '1 min', 'Os testes por critério, o fluxo do Trello e o que vem na Sprint 3. Agradecer.'),
-]
-add(topo('APÊNDICE', 'Roteiro de fala sugerido (cerca de 10 minutos)', 'Sugestão para dividir entre os três. Ajustem quem fala o quê; o importante é cada um apresentar uma parte.')
-    + '<table class="dados roteiro"><thead><tr><th>Bloco</th><th>Páginas</th><th>Tempo</th><th>O que dizer</th><th>Quem</th></tr></thead><tbody>'
-    + ''.join(f'<tr><td><b>{e(b)}</b></td><td class="mono">{e(p)}</td><td class="mono">{e(t)}</td><td>{e(d)}</td><td class="quem"></td></tr>'
-              for b, p, t, d in blocos)
-    + '</tbody></table><p class="nota-rodape"><b>Dica para a demonstração ao vivo:</b> deixe o banco e o site no ar antes (<span class="mono">docker compose up -d db</span> e <span class="mono">flask --app app run --port 5050</span>), já logado como cliente com o questionário respondido, e outra aba como administrador na tela de pesos.</p>',
+    for s in (3, 4, 5)) + '</div><p class="nota-rodape">Também na fila: a resposta do consultor aparecer aos poucos, enquanto é gerada (streaming, RF-21).</p>',
     'APÊNDICE')
 
 # ---------------------------------------------------------------- estilo e PDF
@@ -705,6 +671,26 @@ table.testes { font-size: 19px; table-layout: fixed; } table.testes th:first-chi
 .caixa p { font-size: 25px; } .mods span { font-size: 20px; } .mods small { font-size: 16px; }
 .no p { font-size: 25px; } .ferr { font-size: 21px; } .ferr .mono { font-size: 19px; min-width: 320px; }
 .conta { font-size: 22px; }
+
+.capa.secao h1 { font-size: 110px; } .capa.secao .sub { margin-bottom: 0; }
+.demo { padding: 22px 26px; } .demo pre { font-size: 15px; }
+.passo-demo { font-size: 20px; margin: 8px 0; line-height: 1.35; display: flex; gap: 12px; }
+.passo-demo .mono { color: #7c3aed; font-weight: 700; min-width: 20px; }
+.pag-historia { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: start; }
+.pag-historia-dupla { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 22px; align-items: start; }
+.pag-historia-dupla .us .historia { font-size: 18px; } .pag-historia-dupla .ca p { font-size: 17px; } .pag-historia-dupla .us h3 { font-size: 23px; }
+.pag-historia-dupla .passo-demo { font-size: 18px; }
+.escolha h3 { margin-bottom: 4px; } .escolha .item { font-size: 21px; }
+.ajustes { margin-top: 24px; padding: 18px 28px; } .ajustes p { font-size: 20px; margin: 6px 0; color: #344054; }
+.cadastro { grid-template-columns: 0.75fr 0.75fr 1.2fr !important; align-items: start; }
+.cadastro .print img { height: 760px !important; object-fit: cover; object-position: top; }
+.cadastro .demo .passo-demo { font-size: 18px; }
+table.checklist { font-size: 21px; } table.checklist td { padding: 13px 14px; }
+.ok-mark { color: #12b76a; font-weight: 800; margin-right: 6px; }
+.interface { display: grid; grid-template-columns: 0.55fr 0.55fr 0.55fr 1.35fr; gap: 20px; align-items: start; }
+.interface .cel img { max-height: 760px; object-fit: cover; object-position: top; }
+.interface .coluna-prints .print img { max-height: 330px; object-fit: cover; object-position: top; }
+.atividades { align-items: start; } .atividades .print img { max-height: 820px; object-fit: contain; }
 table.roteiro { font-size: 20px; } table.roteiro td { padding: 16px 14px; } table.roteiro td.quem { min-width: 220px; border-left: 1px dashed #d0d5dd; }
 '''
 
