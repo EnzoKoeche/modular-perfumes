@@ -1,15 +1,17 @@
-"""Renderiza o DER: python3 render_der.py der.dot [sprint1] && dot -Tpng der.dot -o der.png"""
+"""Renderiza o DER: python3 render_der.py der.dot [sprint1|sprint2] && dot -Tpng der.dot -o der.png"""
 import sys
 
-from modelo import AZUL, LARANJA, VERDE, FONT, T, R, GRUPOS, SPRINT1
+from modelo import AZUL, LARANJA, VERDE, FONT, T, R, GRUPOS, SPRINT1, SPRINT2
 
-# uso: python3 render_der.py saida.dot [sprint1]
-if len(sys.argv) > 2 and sys.argv[2] == 'sprint1':
-    T = {k: v for k, v in T.items() if k in SPRINT1}
+# uso: python3 render_der.py saida.dot [sprint1|sprint2]
+RECORTE = sys.argv[2] if len(sys.argv) > 2 else ''
+if RECORTE in ('sprint1', 'sprint2'):
+    T = {k: v for k, v in T.items() if k in SPRINT1 or (RECORTE == 'sprint2' and k in SPRINT2)}
     R = [r for r in R if r[0] in T and r[1] in T]
     GRUPOS = [(g, l, [m for m in ms if m in T]) for g, l, ms in GRUPOS]
     GRUPOS = [g for g in GRUPOS if g[2]]
-    TITULO = 'Diagrama de Entidade e Relacionamento (Lógico) — 1ª Sprint'
+    TITULO = ('Diagrama de Entidade e Relacionamento (Lógico) — 1ª e 2ª Sprints' if RECORTE == 'sprint2'
+              else 'Diagrama de Entidade e Relacionamento (Lógico) — 1ª Sprint')
 else:
     TITULO = 'Diagrama de Entidade e Relacionamento (Lógico) — visão completa'
 

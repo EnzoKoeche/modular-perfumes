@@ -1,0 +1,50 @@
+digraph G {
+  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.42, pad=0.4, dpi=200, fontname="Helvetica", labelloc=t, label=<<FONT POINT-SIZE="22"><B>ARTEFATO 8.1 — Diagrama de Atividades: Cliente, do cadastro à sacola (US1, US3, US7 a US10)</B></FONT><BR/><FONT POINT-SIZE="13">● início   ◉ fim   ◇ decisão   □ ação (a cor indica quem executa)</FONT><BR/> >];
+  node [fontname="Helvetica", fontsize=13, shape=box, style="rounded,filled", fillcolor="#E8F0FB", color="#5B6B8C", penwidth=1.4, margin="0.18,0.08"];
+  edge [fontname="Helvetica", fontsize=12, color="#44516B", arrowsize=0.8, penwidth=1.3];
+  inicio [shape=circle, label="", width=0.3, style=filled, fillcolor=black];
+  legenda [shape=plaintext, style="", label=<<TABLE BORDER="0" CELLSPACING="6"><TR><TD BGCOLOR="#FFF1E6" BORDER="1" COLOR="#5B6B8C">  Cliente  </TD><TD BGCOLOR="#E8F0FB" BORDER="1" COLOR="#5B6B8C">  Sistema (Flask + MySQL)  </TD><TD BGCOLOR="#F1EAFE" BORDER="1" COLOR="#5B6B8C">  Agente de IA (Claude)  </TD></TR></TABLE>>];
+  a1 [label="Preencher o cadastro\n(nome, nascimento, e-mail, senha e confirmação)", fillcolor="#FFF1E6"];
+  d1 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="Campos válidos?\nsenhas iguais?\ndata não futura?", fontsize=12, margin="0.05,0.03"];
+  e1 [label="Destacar o campo e\nmostrar a mensagem do erro\n(US1 CA3)", fillcolor="#E8F0FB"];
+  d2 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="E-mail já\ncadastrado?", fontsize=12, margin="0.05,0.03"];
+  e2 [label="Exibir \"Este e-mail\njá está cadastrado\"\n(US1 CA2)", fillcolor="#E8F0FB"];
+  a2 [label="Gravar a conta com a senha\ncriptografada e abrir a sessão (US1 CA1)", fillcolor="#E8F0FB"];
+  a3 [label="Responder o questionário\nde perfil olfativo", fillcolor="#FFF1E6"];
+  d3 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="Obrigatórias\nrespondidas?", fontsize=12, margin="0.05,0.03"];
+  e3 [label="Destacar as perguntas\npendentes (US3 CA2)", fillcolor="#E8F0FB"];
+  a4 [label="Somar os pesos por família\ne gravar o perfil olfativo (US3 CA1)", fillcolor="#E8F0FB"];
+  a5 [label="Enviar mensagem ao consultor", fillcolor="#FFF1E6"];
+  d4 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="Menos de 30\nmensagens hoje?", fontsize=12, margin="0.05,0.03"];
+  e4 [label="Exibir o limite diário,\nsem chamar a IA (US8 CA3)", fillcolor="#E8F0FB"];
+  a6 [label="Ler o perfil, buscar no catálogo\ne registrar as recomendações", fillcolor="#F1EAFE"];
+  d5 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="API de IA\ndisponível?", fontsize=12, margin="0.05,0.03"];
+  e5 [label="Avisar \"consultor\nindisponível\" e manter\no histórico (US8 CA2)", fillcolor="#E8F0FB"];
+  a7 [label="Gravar a conversa e mostrar\nresposta + cartões (US8 e US9 CA1)", fillcolor="#E8F0FB"];
+  a8 [label="Abrir a ficha do perfume\n(pirâmide e acordes, US7)", fillcolor="#FFF1E6"];
+  a9 [label="Acionar \"Adicionar à sacola\"", fillcolor="#FFF1E6"];
+  d6 [shape=diamond, style=filled, fillcolor="#FFFBEA", color="#B08900", label="Perfume já\nna sacola?", fontsize=12, margin="0.05,0.03"];
+  e6 [label="Exibir \"Este perfume já\nestá na sua sacola\"\n(US10 CA2)", fillcolor="#E8F0FB"];
+  a10 [label="Gravar em sacola_item e exibir\n\"<perfume> entrou na sacola\" (US10 CA1)", fillcolor="#E8F0FB"];
+  fim [shape=doublecircle, label="", width=0.22, style=filled, fillcolor=black];
+  { rank=same; d1; e1; }
+  { rank=same; d2; e2; }
+  { rank=same; d3; e3; }
+  { rank=same; d4; e4; }
+  { rank=same; d5; e5; }
+  { rank=same; d6; e6; }
+  legenda -> inicio [style=invis];
+  inicio -> a1 -> d1;
+  d1 -> e1 [xlabel="não "]; e1 -> a1 [constraint=false];
+  d1 -> d2 [xlabel="sim "];
+  d2 -> e2 [xlabel="sim "]; e2 -> a1 [constraint=false];
+  d2 -> a2 [xlabel="não "]; a2 -> a3 -> d3;
+  d3 -> e3 [xlabel="não "]; e3 -> a3 [constraint=false];
+  d3 -> a4 [xlabel="sim "]; a4 -> a5 -> d4;
+  d4 -> e4 [xlabel="não "]; e4 -> fim [constraint=false];
+  d4 -> a6 [xlabel="sim "]; a6 -> d5;
+  d5 -> e5 [xlabel="não "]; e5 -> a5 [constraint=false];
+  d5 -> a7 [xlabel="sim "]; a7 -> a8 -> a9 -> d6;
+  d6 -> e6 [xlabel="sim "]; e6 -> fim [constraint=false];
+  d6 -> a10 [xlabel="não "]; a10 -> fim;
+}

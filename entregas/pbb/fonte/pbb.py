@@ -1,10 +1,20 @@
-"""Canvas PBB (Product Backlog Building) do Modular Perfumes — versão 3 (três personas)."""
+"""Canvas PBB (Product Backlog Building) do Modular Perfumes — versão 3 (três personas).
+
+uso: python3 pbb.py ../Modular_Perfumes_Canvas_PBB_Sprint1.png
+     python3 pbb.py ../Modular_Perfumes_Canvas_PBB_Sprint2.png sprint2
+Fonte: Helvetica do macOS; fora do Mac, Liberation Sans (mesmas medidas). PBB_FONTES aponta a pasta da Liberation.
+"""
+import os
 import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
 OUT = sys.argv[1]
 HELV = '/System/Library/Fonts/Helvetica.ttc'
+LIBERATION = os.environ.get('PBB_FONTES', '/usr/share/fonts/truetype/liberation')
+SPRINT = 2 if len(sys.argv) > 2 and sys.argv[2] == 'sprint2' else 1
+SPRINT2 = {'Manter as alternativas e os pesos', 'Consultar a ficha do perfume', 'Conversar com o agente consultor',
+           'Receber as recomendações personalizadas', 'Adicionar e remover perfumes da sacola'}
 
 # ------------------------------------------------------------------ conteúdo
 PRODUTO = 'Modular Perfumes'
@@ -98,14 +108,16 @@ PERSONAS = [
 EQUIPE = 'Equipe: Enzo Koeche Castagna • Angelo • André Lagos — Engenharia de Software / PUCPR'
 
 # ------------------------------------------------------------------ estilo
-PRETO, CINZA_ESC, LARANJA, VERMELHO = '#111111', '#2E2E2E', '#EF7B22', '#D32F2F'
+PRETO, CINZA_ESC, LARANJA, VERMELHO, VERDE_S1 = '#111111', '#2E2E2E', '#EF7B22', '#D32F2F', '#2E7D32'
 CINZA_BORDA, CINZA_TXT = '#8A8A8A', '#555555'
 W = 6000
 M = 90
 
 
 def font(size, bold=False):
-    return ImageFont.truetype(HELV, size, index=1 if bold else 0)
+    if os.path.exists(HELV):
+        return ImageFont.truetype(HELV, size, index=1 if bold else 0)
+    return ImageFont.truetype(os.path.join(LIBERATION, 'LiberationSans-Bold.ttf' if bold else 'LiberationSans-Regular.ttf'), size)
 
 
 def wrap(draw, text, fnt, maxw):
@@ -306,17 +318,24 @@ for i, p in enumerate(PERSONAS):
         bx = x + c * (pw + PBI_GAP)
         by = y + r * (PBI_H + PBI_GAP)
         b = (bx, by, bx + pw, by + PBI_H)
-        if s1:
+        if (SPRINT == 1 and s1) or (SPRINT == 2 and t in SPRINT2):
             d.rounded_rectangle((bx - 9, by - 9, bx + pw + 9, by + PBI_H + 9), 12, outline=VERMELHO, width=9)
+        elif SPRINT == 2 and s1:   # já entregue na Sprint 1
+            d.rounded_rectangle((bx - 9, by - 9, bx + pw + 9, by + PBI_H + 9), 12, outline=VERDE_S1, width=6)
         rbox(d, b, 'white', outline=CINZA_BORDA, width=3, r=6)
         text_box(d, b, t, 38, fill=PRETO, max_size=38, pad=20)
 
-# legenda da Sprint 1
-sprint = [t for p in PERSONAS for (t, s1) in p['pbis'] if s1]
+# legenda da sprint
 lb = (right_x0 + 40, FRAME_B - legend_h - 40, W - M - 40, FRAME_B - 40)
 dashed_rect(d, lb, VERMELHO)
-text_box(d, lb, 'SPRINT 1 — PBIs destacados em vermelho: ' + ' • '.join(sprint), 40, True, fill=VERMELHO,
-         max_size=40)
+if SPRINT == 1:
+    sprint = [t for p in PERSONAS for (t, s1) in p['pbis'] if s1]
+    legenda = 'SPRINT 1 — PBIs destacados em vermelho: ' + ' • '.join(sprint)
+else:
+    sprint = [t for p in PERSONAS for (t, _) in p['pbis'] if t in SPRINT2]
+    legenda = ('SPRINT 2 — PBIs destacados em vermelho: ' + ' • '.join(sprint)
+               + '   |   Borda verde: PBIs entregues na Sprint 1')
+text_box(d, lb, legenda, 40, True, fill=VERMELHO, max_size=40)
 
 # rodapé
 d.text((M, FRAME_B + 40), EQUIPE, font=font(36), fill=CINZA_TXT)
