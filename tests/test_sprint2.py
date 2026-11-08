@@ -116,5 +116,34 @@ def test_consultor_sem_chave_responde_indisponivel(admin, app, monkeypatch):
 
 def test_consultor_bloqueado_sem_questionario(client):
     cadastrar(client)
-    assert client.get('/consultor/').status_code == 403
+    assert '/questionario' in client.get('/consultor/').headers['Location']            # US9 CA3 / RN-04
     assert client.post('/consultor/mensagem', json={'texto': 'oi'}).status_code == 403
+
+
+def test_us7_ca2_ficha_de_perfume_oculto_da_404(admin, app, banco):
+    importar_exemplo(admin)
+    pid = banco("SELECT id FROM perfume WHERE api_id = 'exemplo-002'")[0]['id']
+    banco('UPDATE perfume SET visivel = 0 WHERE id = %s', (pid,))
+    resp = app.test_client().get(f'/perfumes/{pid}')
+    assert resp.status_code == 404 and 'Perfume não encontrado.' in resp.get_data(as_text=True)
+
+
+def test_us7_ca3_visitante_ve_convite_para_criar_conta(admin, app, banco):
+    importar_exemplo(admin)
+    pid = banco("SELECT id FROM perfume WHERE api_id = 'exemplo-002'")[0]['id']
+    html = app.test_client().get(f'/perfumes/{pid}').get_data(as_text=True)
+    assert 'Criar conta e descobrir se combina com você' in html and '/sacola/adicionar/' not in html
+
+
+def test_us8_ca3_limite_diario_nao_chama_a_ia(admin, app, banco, monkeypatch):
+    c = cliente_com_perfil(app)
+    uid = banco("SELECT id FROM usuario WHERE email = 'cliente@teste.com'")[0]['id']
+    with app.app_context():
+        conversa_id = consultor.conversa_atual(uid)
+    for _ in range(consultor.LIMITE_DIARIO):
+        banco("INSERT INTO mensagem (conversa_id, papel, conteudo_json) VALUES (%s, 'USUARIO', '{\"texto\": \"oi\"}')",
+              (conversa_id,))
+    chamadas = []
+    monkeypatch.setattr(consultor, 'cliente_anthropic', lambda: cliente_falso(chamadas))
+    resp = c.post('/consultor/mensagem', json={'texto': 'mais uma'})
+    assert resp.status_code == 429 and 'limite' in resp.get_json()['erro'] and chamadas == []

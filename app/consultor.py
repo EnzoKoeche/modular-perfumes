@@ -10,7 +10,7 @@ from datetime import date
 
 import anthropic
 from anthropic import beta_tool
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
 
 from . import db
 from .auth import perfil_obrigatorio, questionario_concluido, usuario_logado
@@ -247,9 +247,8 @@ def conversa_atual(usuario_id, nova=False):
 @perfil_obrigatorio('CLIENTE')
 def pagina():
     usuario = usuario_logado()
-    if not questionario_concluido(usuario['id']):
-        return render_template('erro.html', codigo=403,
-                               mensagem='Conclua o questionário de perfil olfativo para liberar o consultor.'), 403
+    if not questionario_concluido(usuario['id']):       # US9 CA3 / RN-04: leva ao questionário
+        return redirect(url_for('questionario.responder'))
     conversa_id = conversa_atual(usuario['id'], nova=request.args.get('nova') == '1')
     mensagens = [{'papel': m['papel'], 'texto': json.loads(m['conteudo_json'])['texto']} for m in db.consultar(
         'SELECT papel, conteudo_json FROM mensagem WHERE conversa_id = %s ORDER BY id', (conversa_id,))]
