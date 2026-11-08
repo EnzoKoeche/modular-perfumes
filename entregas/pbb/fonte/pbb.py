@@ -105,7 +105,7 @@ PERSONAS = [
     ),
 ]
 
-EQUIPE = 'Equipe: Enzo Koeche Castagna • Angelo • André Lagos — Engenharia de Software / PUCPR'
+EQUIPE = 'Equipe: Enzo Koeche Castagna • André Lagos — Engenharia de Software / PUCPR'
 
 # ------------------------------------------------------------------ estilo
 PRETO, CINZA_ESC, LARANJA, VERMELHO, VERDE_S1 = '#111111', '#2E2E2E', '#EF7B22', '#D32F2F', '#2E7D32'

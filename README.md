@@ -3,7 +3,7 @@
 Plataforma web gratuita de **consultoria olfativa com IA**. O cliente cria a conta e responde um questionário de perfil olfativo. Depois, conversa com um agente de inteligência artificial (Claude, via SDK da Anthropic), que recomenda perfumes de um catálogo importado de uma API externa. Os perfumes de que ele gostou vão para uma sacola, e a finalização leva o cliente às lojas parceiras onde comprar. O site não vende nem processa pagamento.
 
 Projeto da disciplina **Experiência Criativa – Projetando Soluções Computacionais** (Bacharelado em Engenharia de Software, PUCPR).
-**Equipe:** Enzo Koeche Castagna · Angelo · André Lagos.
+**Equipe:** Enzo Koeche Castagna · André Lagos.
 
 > **Status:** 1ª e 2ª Sprints implementadas (US1 a US10, 44 testes automáticos). Especificação v3 (2026-09-14) alinhada aos enunciados da disciplina: três personas, 28 PBIs, user stories no padrão da rubrica, DER e scripts SQL.
 

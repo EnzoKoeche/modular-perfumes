@@ -412,9 +412,11 @@ add('''<div class="capa fim">
 </div>''', escuro=True)
 
 # ---------------------------------------------------------------- apêndice (perguntas da banca)
-add(topo('APÊNDICE', 'Roteiro de fala (10 minutos)', 'Preencham a coluna "Quem". Treinem a demonstração ao vivo pelo menos uma vez com o cronômetro.')
+QUEM = {'[1] Canvas PBB': 'André', '[2] Cadastro (ajuste)': 'André', '[2] US6 · pesos': 'André', '[2] US7 · ficha': 'Enzo',
+        '[2] US8 e US9 · consultor': 'Enzo', '[2] US10 · sacola': 'Enzo', '[2] Interface': 'Enzo'}
+add(topo('APÊNDICE', 'Roteiro de fala (10 minutos)', '4,5 minutos para cada um, e cada um apresenta o que fez. Treinem a demonstração ao vivo pelo menos uma vez com o cronômetro.')
     + '<table class="dados roteiro"><thead><tr><th>Bloco</th><th>Páginas</th><th>Tempo</th><th>O que fazer</th><th>Quem</th></tr></thead><tbody>'
-    + ''.join(f'<tr><td><b>{e(b)}</b></td><td class="mono">{e(p)}</td><td class="mono">{e(t)}</td><td>{e(d)}</td><td class="quem"></td></tr>' for b, p, t, d in [
+    + ''.join(f'<tr><td><b>{e(b)}</b></td><td class="mono">{e(p)}</td><td class="mono">{e(t)}</td><td>{e(d)}</td><td class="quem"><b>{QUEM[b]}</b></td></tr>' for b, p, t, d in [
         ('[1] Canvas PBB', '3–6', '2 min', 'Mostrar o Canvas da Sprint 2: persona → feature → PBIs em vermelho. Citar os ajustes finais (cadastro, US9, US6).'),
         ('[2] Cadastro (ajuste)', '8', '1 min', 'Ao vivo: data no futuro e senhas diferentes, depois criar a conta, depois e-mail duplicado. Mostrar o usuario no banco.'),
         ('[2] US6 · pesos', '9–10', '1,5 min', 'Ao vivo como administrador: salvar, digitar −3, salvar a pergunta "Para quem é". Mostrar alternativa_peso.'),
